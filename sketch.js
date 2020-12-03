@@ -1,7 +1,7 @@
 (() => {
 
     const height = 300;
-    const widht = 500;
+    const width = 500;
 
     let x = 0;
     let speed = 3;
