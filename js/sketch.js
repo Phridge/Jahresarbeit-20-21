@@ -3,13 +3,21 @@ const widht = 500;
 
 let city = new City([
     new Consumer(10, 10), 
-    new Consumer(100, 100), 
+    new Consumer(100, 150), 
     new Consumer(200, 10), 
-    new Node(0, 1),
+    new Node(10, 0),
+    new Node(10, 200),
+    new Consumer(200, 100), 
+    new Consumer(200, 200), 
+    new Consumer(300, 250), 
 ]);
 city.conntect(city.cityObjects[0], city.cityObjects[3]);
 city.conntect(city.cityObjects[1], city.cityObjects[3]);
 city.conntect(city.cityObjects[2], city.cityObjects[3]);
+city.conntect(city.cityObjects[3], city.cityObjects[4]);
+city.conntect(city.cityObjects[4], city.cityObjects[5]);
+city.conntect(city.cityObjects[4], city.cityObjects[6]);
+city.conntect(city.cityObjects[4], city.cityObjects[7]);
 
 
 let population = new Population(10, 0.1, 2, city);
