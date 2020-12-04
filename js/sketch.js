@@ -1,4 +1,4 @@
-sketch = (function() {
+const sketch = () => {
     const print = console.log.bind(console)
 
     const height = 300;
@@ -27,8 +27,6 @@ sketch = (function() {
 
     let population = new Population(10, 0.1, 2, city);
 
-
-
     function animate() {
         requestAnimationFrame(animate);
         draw();
@@ -45,7 +43,7 @@ sketch = (function() {
         population.nextPopulation();
     }
 
-    animate()
-});
+    animate();
+};
 
 document.addEventListener("DOMContentLoaded", sketch);
