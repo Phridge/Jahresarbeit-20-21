@@ -5,7 +5,7 @@ let city = new City([
     new Consumer(10, 10), 
     new Consumer(100, 100), 
     new Consumer(200, 10), 
-    new Node(0, 0),
+    new Node(0, 1),
 ]);
 city.conntect(city.cityObjects[0], city.cityObjects[3]);
 city.conntect(city.cityObjects[1], city.cityObjects[3]);
