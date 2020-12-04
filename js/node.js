@@ -19,6 +19,10 @@ class Node {
         ctx.fillStyle = '#000000';
         ctx.fillRect(this.pos.x - this.width/2, this.pos.y - this.height/2, this.width, this.height)
     }
+
+    clone() {
+        return new Node(this.pos)
+    }
 }
 
 Node.prototype.width = 5

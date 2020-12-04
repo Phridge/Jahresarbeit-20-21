@@ -1,24 +1,36 @@
 class Population {
-    constructor(size, mutationRate, maxMutation, example) {
+
+    /**
+     * Create a new Population with mutation characteristics
+     * and a "prefab" city, which gets copied size-1 times.
+     * The examble city is part of this population, so the node
+     * position stabilizes on the best position over time.
+     * @param {*} size population size
+     * @param {*} mutationRate the chance of mutations
+     * @param {*} maxMoveDelta the maximal distance a node can move
+     * @param {*} example the city that gets copied and mutated
+     */
+    constructor(size, mutationRate, maxMoveDelta, example) {
         this.size = size;
         this.mutationRate = mutationRate;
-        this.maxMutation = maxMutation;
+        this.maxMutation = maxMoveDelta;
         this.cities = [example]; // keep the best city 
         for(let i = 1; i < this.size; i++) {
-            let next = Object.assign(Object.create(Object.getPrototypeOf(example)), example);
-            next.cityObjects = next.mutateNodes(mutationRate, maxMutation);
+            // let next = Object.assign(Object.create(Object.getPrototypeOf(example)), example);
+            let next = example.clone()
+            next.mutateNodes(mutationRate, maxMoveDelta);
             this.cities.push(next);
         }
     }
 
     getFittest() {
-        let previousBest = this.cities[0];
+        let currentBest = this.cities[0]; // choose one randomly
         this.cities.forEach(city => {
-            if(previousBest.getFitness() > city.getFitness()) {
-                previousBest = city;
+            if(currentBest.getFitness() > city.getFitness()) {
+                currentBest = city;
             }
         });
-        return previousBest;
+        return currentBest;
     }
 
     nextPopulation() {

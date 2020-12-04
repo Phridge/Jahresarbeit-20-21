@@ -99,14 +99,24 @@ class City {
     /**
      * Mutate a City. Currently only moves around the nodes by chance.
      * @param {*} mutationRate the chance that a city can mutate
-     * @param {*} maxMutation the maximal move delta of a node in x any y direction
+     * @param {*} maxDist the maximal move delta of a node in x or y direction
      */
-    mutateNodes(mutationRate, maxMutation) {
-        return this.cityObjects.map(cityObject => {
+    mutateNodes(mutationRate, maxDist) {
+        this.cityObjects.map(cityObject => {
             if(cityObject instanceof Node && Math.random() < mutationRate) {
-                cityObject.moveRandomly(maxMutation)
+                cityObject.moveRandomly(maxDist)
             }
             return Object.assign(Object.create(Object.getPrototypeOf(cityObject)), cityObject);
         }); 
+    }
+
+    /**
+     * Make an exact copy of this city.
+     * Important: the connections are not cloned, but the nodes.
+     */
+    clone() {
+        const c = new City(Array.from(this.cityObjects, o => o.clone()))
+        c.conntections = this.conntections
+        return c
     }
 }
