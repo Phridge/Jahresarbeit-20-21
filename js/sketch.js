@@ -1,14 +1,18 @@
 const height = 300;
 const widht = 500;
 
-let houseA = new Consumer(10, 10);
-let houseB = new Consumer(100, 10);
-let node = new Node(50, 50);
-let exampleCity = new City([houseA, houseB, node]);
-exampleCity.conntect(houseA, node);
-exampleCity.conntect(houseB, node);
+let city = new City([
+    new Consumer(10, 10), 
+    new Consumer(100, 100), 
+    new Consumer(200, 10), 
+    new Node(0, 0),
+]);
+city.conntect(city.cityObjects[0], city.cityObjects[3]);
+city.conntect(city.cityObjects[1], city.cityObjects[3]);
+city.conntect(city.cityObjects[2], city.cityObjects[3]);
 
-let population = new Population(10, 0.1, 5, exampleCity);
+
+let population = new Population(10, 0.1, 2, city);
 
 function animate() {
     requestAnimationFrame(animate);
@@ -24,7 +28,6 @@ function draw() {
     population.getFittest().draw(ctx);
 
     // console.log(population.getFittest().getFitness());
-    // console.log(Math.sqrt(Math.pow(houseA.x - houseB.x, 2) + Math.pow(houseA.y - houseB.y, 2)));
     population = population.nextPopulation();
 }
 
