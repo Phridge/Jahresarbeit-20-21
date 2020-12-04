@@ -7,11 +7,11 @@ const sketch = () => {
     const queue = []
 
     let city = new City([
-        new Consumer(new Point(10, 10)), 
         new Consumer(new Point(100, 150)), 
-        new Consumer(new Point(200, 10)), 
-        new Node(new Point(10, 0)),
-        new Node(new Point(10, 200)),
+        new Consumer(new Point(20, 20)), 
+        new Consumer(new Point(200, 20)), 
+        new Node    (new Point(10, 100)),
+        new Node    (new Point(400, 50)),
         new Consumer(new Point(200, 100)), 
         new Consumer(new Point(200, 200)), 
         new Consumer(new Point(300, 250)), 
