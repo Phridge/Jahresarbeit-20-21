@@ -14,6 +14,7 @@ sketch = (function() {
         new Consumer(200, 100), 
         new Consumer(200, 200), 
         new Consumer(300, 250), 
+        new Consumer(400, 100),
     ]);
     city.connect(city.cityObjects[0], city.cityObjects[3]);
     city.connect(city.cityObjects[1], city.cityObjects[3]);
@@ -22,6 +23,7 @@ sketch = (function() {
     city.connect(city.cityObjects[4], city.cityObjects[5]);
     city.connect(city.cityObjects[4], city.cityObjects[6]);
     city.connect(city.cityObjects[4], city.cityObjects[7]);
+    city.connect(city.cityObjects[4], city.cityObjects[8])
 
     let population = new Population(10, 0.1, 2, city);
 
@@ -40,7 +42,7 @@ sketch = (function() {
         population.getFittest().draw(ctx);
 
         // print(population.getFittest().getFitness());
-        population = population.nextPopulation();
+        population.nextPopulation();
     }
 
     animate()

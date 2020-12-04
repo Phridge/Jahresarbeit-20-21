@@ -13,14 +13,8 @@ class Population {
     constructor(size, mutationRate, maxMoveDelta, example) {
         this.size = size;
         this.mutationRate = mutationRate;
-        this.maxMutation = maxMoveDelta;
-        this.cities = [example]; // keep the best city 
-        for(let i = 1; i < this.size; i++) {
-            // let next = Object.assign(Object.create(Object.getPrototypeOf(example)), example);
-            let next = example.clone()
-            next.mutateNodes(mutationRate, maxMoveDelta);
-            this.cities.push(next);
-        }
+        this.maxMoveDelta = maxMoveDelta;
+        this.cities = new Array(size).fill(example)
     }
 
     getFittest() {
@@ -34,6 +28,15 @@ class Population {
     }
 
     nextPopulation() {
-        return new Population(this.size, this.mutationRate, this.maxMutation, this.getFittest());
+        const fittest = this.getFittest()
+        const cities = new Array(this.size)
+        
+        cities[0] = fittest;
+        for(var i = 1; i < this.size; i++) {
+            const child = fittest.clone()
+            child.mutate(this.mutationRate, this.maxMoveDelta)
+            cities[i] = child
+        }
+        this.cities = cities
     }
 }

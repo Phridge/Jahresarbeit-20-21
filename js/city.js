@@ -101,7 +101,7 @@ class City {
      * @param {*} mutationRate the chance that a city can mutate
      * @param {*} maxDist the maximal move delta of a node in x or y direction
      */
-    mutateNodes(mutationRate, maxDist) {
+    mutate(mutationRate, maxDist) {
         this.cityObjects.map(cityObject => {
             if(cityObject instanceof Node && Math.random() < mutationRate) {
                 cityObject.moveRandomly(maxDist)
@@ -118,5 +118,15 @@ class City {
         const c = new City(Array.from(this.cityObjects, o => o.clone()))
         c.connections = this.connections
         return c
+    }
+
+    /**
+     * Clones the data from the other city into this one.
+     * Reuses memory.
+     * @param {*} other the city that should be copied into this city.
+     */
+    cloneFrom(other) {
+        this.cityObjects = Array.from(other.cityObjects, o => o.clone())
+        this.connections = other.connections
     }
 }
