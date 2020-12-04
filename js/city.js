@@ -28,4 +28,37 @@ class City {
             cityObject.draw(ctx);
         });
     }
+
+    setConnections(conntections) {
+        this.conntections = conntections;
+    }
+
+    getConntections() {
+        return this.conntections;
+    }
+
+    getFitness() {
+        let length = 0;
+        this.conntections.forEach(conntection => {
+            let a = this.cityObjects[conntection[0]];
+            let b = this.cityObjects[conntection[1]];
+            length += Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+        });
+        return length;
+    }
+
+    mutateNodes(mutationRate, maxMutation) {
+        return this.cityObjects.map(cityObject => {
+            if(cityObject instanceof Node && Math.random() < mutationRate) {
+                let direction = Math.floor(Math.random() * 2) - 1;
+                if(direction == 0) direction = 1;
+                cityObject.x += (Math.floor(Math.random() * maxMutation) + 1) * direction;
+
+                direction = Math.floor(Math.random() * 2) - 1;
+                if(direction == 0) direction = 1;
+                cityObject.y += Math.floor(Math.random() * maxMutation) * direction;
+            }
+            return Object.assign(Object.create(Object.getPrototypeOf(cityObject)), cityObject);
+        }); 
+    }
 }
