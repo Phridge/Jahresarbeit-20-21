@@ -1,3 +1,5 @@
+const print = console.log.bind(console)
+
 const height = 300;
 const widht = 500;
 
@@ -35,7 +37,7 @@ function draw() {
     
     population.getFittest().draw(ctx);
 
-    // console.log(population.getFittest().getFitness());
+    // print(population.getFittest().getFitness());
     population = population.nextPopulation();
 }
 

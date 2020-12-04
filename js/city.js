@@ -18,10 +18,8 @@ class City {
     addConnectedCityObject(cityObject) {
         if(cityObject instanceof Node) {
             const sortedByDist = Array.from(this.cityObjects, o => {
-                const dx = o.x - cityObject.x
-                const dy = o.y - cityObject.y
                 return {
-                    dist: Math.sqrt(dx * dx + dy * dy),
+                    dist: o.pos.dist(cityObject.pos),
                     obj: o,
                 }
             })
@@ -78,8 +76,8 @@ class City {
             ctx.strokeStyle = '#000000';
             let a = this.cityObjects[conntection[0]];
             let b = this.cityObjects[conntection[1]];
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
+            ctx.moveTo(a.pos.x, a.pos.y);
+            ctx.lineTo(b.pos.x, b.pos.y);
             ctx.stroke();
         });
         this.cityObjects.forEach(cityObject => {
@@ -91,30 +89,22 @@ class City {
      * The fitness is calculated by adding the lengths of all connections.
      */
     getFitness() {
-        let length = 0;
-        this.conntections.forEach(conntection => {
-            let a = this.cityObjects[conntection[0]];
-            let b = this.cityObjects[conntection[1]];
-            length += Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-        });
-        return length;
+        return this.conntections.reduce((acc, connection) => {
+            const a = this.cityObjects[connection[0]]
+            const b = this.cityObjects[connection[1]]
+            return acc + a.pos.dist(b.pos)
+        }, 0)
     }
 
     /**
-     * Mutate a City. Currently moves around the nodes by chance.
+     * Mutate a City. Currently only moves around the nodes by chance.
      * @param {*} mutationRate the chance that a city can mutate
-     * @param {*} maxMutation the maximal move delta of a node
+     * @param {*} maxMutation the maximal move delta of a node in x any y direction
      */
     mutateNodes(mutationRate, maxMutation) {
         return this.cityObjects.map(cityObject => {
             if(cityObject instanceof Node && Math.random() < mutationRate) {
-                let direction = Math.floor(Math.random() * 2) - 1;
-                if(direction == 0) direction = 1;
-                cityObject.x += (Math.floor(Math.random() * maxMutation) + 1) * direction;
-
-                direction = Math.floor(Math.random() * 2) - 1;
-                if(direction == 0) direction = 1;
-                cityObject.y += Math.floor(Math.random() * maxMutation) * direction;
+                cityObject.moveRandomly(maxMutation)
             }
             return Object.assign(Object.create(Object.getPrototypeOf(cityObject)), cityObject);
         }); 

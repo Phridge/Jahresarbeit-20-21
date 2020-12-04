@@ -3,8 +3,8 @@ class Population {
         this.size = size;
         this.mutationRate = mutationRate;
         this.maxMutation = maxMutation;
-        this.cities = [];
-        for(let i = 0; i < this.size; i++) {
+        this.cities = [example]; // keep the best city 
+        for(let i = 1; i < this.size; i++) {
             let next = Object.assign(Object.create(Object.getPrototypeOf(example)), example);
             next.cityObjects = next.mutateNodes(mutationRate, maxMutation);
             this.cities.push(next);
