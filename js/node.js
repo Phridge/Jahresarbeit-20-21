@@ -1,11 +1,7 @@
 class Node {
 
-    constructor(x, y) {
-        if(x instanceof Point) {
-            this.pos = x
-        } else {
-            this.pos = new Point(x + this.width/2, y + this.width/2)
-        }
+    constructor(pos) {
+        this.pos = pos
     }
 
     moveRandomly(maxDist) {

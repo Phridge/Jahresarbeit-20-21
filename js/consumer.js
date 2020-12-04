@@ -1,11 +1,7 @@
 class Consumer {
 
-    constructor(x, y) {
-        if (x instanceof Point) {
-            this.pos = x
-        } else {
-            this.pos = new Point(x + this.width / 2, y + this.height / 2)
-        }
+    constructor(pos) {
+        this.pos = pos
     }
 
     draw(ctx) {
