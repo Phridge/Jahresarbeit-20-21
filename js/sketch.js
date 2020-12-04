@@ -17,14 +17,14 @@ const sketch = () => {
         new Consumer(300, 250), 
         new Consumer(400, 100),
     ]);
-    city.connect(city.cityObjects[0], city.cityObjects[3]);
-    city.connect(city.cityObjects[1], city.cityObjects[3]);
-    city.connect(city.cityObjects[2], city.cityObjects[3]);
-    city.connect(city.cityObjects[3], city.cityObjects[4]);
-    city.connect(city.cityObjects[4], city.cityObjects[5]);
-    city.connect(city.cityObjects[4], city.cityObjects[6]);
-    city.connect(city.cityObjects[4], city.cityObjects[7]);
-    city.connect(city.cityObjects[4], city.cityObjects[8])
+    city.connect(0, 3);
+    city.connect(1, 3);
+    city.connect(2, 3);
+    city.connect(3, 4);
+    city.connect(4, 5);
+    city.connect(4, 6);
+    city.connect(4, 7);
+    city.connect(4, 8)
 
     let population = new Population(10, 0.1, 2, city);
 

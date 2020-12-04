@@ -5,7 +5,9 @@ class City {
     }
 
     addCityObject(cityObject) {
-        this.cityObjects.push(cityObject);
+        const index = this.cityObjects.length
+        this.cityObjects.push(cityObject)
+        return index
     }
 
     /**
@@ -62,11 +64,10 @@ class City {
             }, {dist: +Infinity, obj: undefined}).obj
 
             // add the city object
-            this.addCityObject(cityObject)
+            const cityObjectIndex = this.addCityObject(cityObject)
             if(node) {
                 // if the node was found, add the connection
-                this.connect(node, cityObject)
-                console.log(this)
+                this.connect(this.getIndex(node), cityObjectIndex)
             }
         } else {
             throw Error("Not a city object")
@@ -74,28 +75,31 @@ class City {
     }
 
     /**
-     * Adds a connection between two nodes.
-     * a and b must be city objects, not indices.
-     * @param {*} a first node
-     * @param {*} b second node
+     * Get the index of an city object. -1 if not found.
+     * @param {*} obj the city object
      */
-    connect(a, b) {
-        let aIndex = this.cityObjects.indexOf(a);
-        let bIndex = this.cityObjects.indexOf(b);
-        this.connections.push([aIndex, bIndex]);
+    getIndex(obj) {
+        return this.cityObjects.indexOf(obj)
     }
 
     /**
-     * Clear any connection between two nodes.
+     * Adds a connection between two nodes.
+     * @param {*} a first node index
+     * @param {*} b second node index
+     */
+    connect(a, b) {
+        this.connections.push([a, b]);
+    }
+
+    /**
+     * Clear any connection between two objects (indices).
      * Does nothing if no connections exists.
      * @param {*} a one part of the connection
      * @param {*} b the other part of the connection
      */
     disconnect(a, b) {
-        let aIndex = this.cityObjects.indexOf(a);
-        let bIndex = this.cityObjects.indexOf(b);
-        let cIndex = this.connections.findIndex(c => c == [aIndex, bIndex] || c == [bIndex, aIndex])
-        this.connections.splice(cIndex, 1)
+        let c = this.connections.findIndex(c => c == [a, b] || c == [b, a])
+        this.connections.splice(c, 1)
     }
 
     draw(ctx) {
