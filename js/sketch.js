@@ -13,13 +13,13 @@ let city = new City([
     new Consumer(200, 200), 
     new Consumer(300, 250), 
 ]);
-city.conntect(city.cityObjects[0], city.cityObjects[3]);
-city.conntect(city.cityObjects[1], city.cityObjects[3]);
-city.conntect(city.cityObjects[2], city.cityObjects[3]);
-city.conntect(city.cityObjects[3], city.cityObjects[4]);
-city.conntect(city.cityObjects[4], city.cityObjects[5]);
-city.conntect(city.cityObjects[4], city.cityObjects[6]);
-city.conntect(city.cityObjects[4], city.cityObjects[7]);
+city.connect(city.cityObjects[0], city.cityObjects[3]);
+city.connect(city.cityObjects[1], city.cityObjects[3]);
+city.connect(city.cityObjects[2], city.cityObjects[3]);
+city.connect(city.cityObjects[3], city.cityObjects[4]);
+city.connect(city.cityObjects[4], city.cityObjects[5]);
+city.connect(city.cityObjects[4], city.cityObjects[6]);
+city.connect(city.cityObjects[4], city.cityObjects[7]);
 
 
 let population = new Population(10, 0.1, 2, city);

@@ -1,7 +1,7 @@
 class City {
     constructor(cityObjects) {
         this.cityObjects = cityObjects;
-        this.conntections = [];
+        this.connections = [];
     }
 
     addCityObject(cityObject) {
@@ -33,13 +33,13 @@ class City {
             this.disconnect(sortedByDist[0].obj, sortedByDist[1].obj)
 
             this.addCityObject(cityObject)
-            this.conntect(sortedByDist[0].obj, cityObject)
-            this.conntect(sortedByDist[1].obj, cityObject)
+            this.connect(sortedByDist[0].obj, cityObject)
+            this.connect(sortedByDist[1].obj, cityObject)
 
         } else if (cityObject instanceof Consumer) {
             const node = this.cityObjects.find(o => o instanceof Node)
             this.addCityObject(cityObject)
-            this.conntect(node, cityObject)
+            this.connect(node, cityObject)
         } else {
             throw Error("Not a city object")
         }
@@ -51,10 +51,10 @@ class City {
      * @param {*} a first node
      * @param {*} b second node
      */
-    conntect(a, b) {
+    connect(a, b) {
         let aIndex = this.cityObjects.indexOf(a);
         let bIndex = this.cityObjects.indexOf(b);
-        this.conntections.push([aIndex, bIndex]);
+        this.connections.push([aIndex, bIndex]);
     }
 
     /**
@@ -66,16 +66,16 @@ class City {
     disconnect(a, b) {
         let aIndex = this.cityObjects.indexOf(a);
         let bIndex = this.cityObjects.indexOf(b);
-        let cIndex = this.conntections.findIndex(c => c == [aIndex, bIndex] || c == [bIndex, aIndex])
-        this.conntections.splice(cIndex, 1)
+        let cIndex = this.connections.findIndex(c => c == [aIndex, bIndex] || c == [bIndex, aIndex])
+        this.connections.splice(cIndex, 1)
     }
 
     draw(ctx) {
-        this.conntections.forEach(conntection => {
+        this.connections.forEach(connection => {
             ctx.beginPath();
             ctx.strokeStyle = '#000000';
-            let a = this.cityObjects[conntection[0]];
-            let b = this.cityObjects[conntection[1]];
+            let a = this.cityObjects[connection[0]];
+            let b = this.cityObjects[connection[1]];
             ctx.moveTo(a.pos.x, a.pos.y);
             ctx.lineTo(b.pos.x, b.pos.y);
             ctx.stroke();
@@ -89,7 +89,7 @@ class City {
      * The fitness is calculated by adding the lengths of all connections.
      */
     getFitness() {
-        return this.conntections.reduce((acc, connection) => {
+        return this.connections.reduce((acc, connection) => {
             const a = this.cityObjects[connection[0]]
             const b = this.cityObjects[connection[1]]
             return acc + a.pos.dist(b.pos)
@@ -116,7 +116,7 @@ class City {
      */
     clone() {
         const c = new City(Array.from(this.cityObjects, o => o.clone()))
-        c.conntections = this.conntections
+        c.connections = this.connections
         return c
     }
 }
