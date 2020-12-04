@@ -4,6 +4,7 @@ sketch = (function() {
     const height = 300;
     const widht = 500;
     const canvas = document.getElementById('canvas');
+    const queue = []
 
     let city = new City([
         new Consumer(10, 10), 
@@ -35,6 +36,10 @@ sketch = (function() {
     }
 
     function draw() {
+        while(queue.length > 0) { // dispatch all events
+            queue.shift()(population);
+        }
+
         let ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, widht, height);
@@ -44,6 +49,16 @@ sketch = (function() {
         // print(population.getFittest().getFitness());
         population.nextPopulation();
     }
+
+    canvas.addEventListener("click", (event) => {
+        const clickPos = new Point(event.offsetX, event.offsetY)
+        const obj = event.shiftKey? new Node(clickPos) : new Consumer(clickPos)
+        queue.push(pop => {
+            let best = pop.getFittest()
+            best.addConnectedCityObject(obj)
+            pop.repopulate(best)
+        })
+    }, false)
 
     animate()
 });

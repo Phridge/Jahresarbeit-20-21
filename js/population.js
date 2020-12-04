@@ -14,7 +14,7 @@ class Population {
         this.size = size;
         this.mutationRate = mutationRate;
         this.maxMoveDelta = maxMoveDelta;
-        this.cities = new Array(size).fill(example)
+        this.repopulate(example)
     }
 
     getFittest() {
@@ -30,7 +30,7 @@ class Population {
     nextPopulation() {
         const fittest = this.getFittest()
         const cities = new Array(this.size)
-        
+
         cities[0] = fittest;
         for(var i = 1; i < this.size; i++) {
             const child = fittest.clone()
@@ -38,5 +38,9 @@ class Population {
             cities[i] = child
         }
         this.cities = cities
+    }
+
+    repopulate(example) {
+        this.cities = new Array(this.size).fill(example)
     }
 }

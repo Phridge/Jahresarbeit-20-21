@@ -16,30 +16,58 @@ class City {
      * @param {*} cityObject the city object to be added.
      */
     addConnectedCityObject(cityObject) {
-        if(cityObject instanceof Node) {
-            const sortedByDist = Array.from(this.cityObjects, o => {
-                return {
-                    dist: o.pos.dist(cityObject.pos),
-                    obj: o,
+        /*if(cityObject instanceof Node) { // doesn't work
+            // get the nearest Node
+            // get the nearest Consumer
+            // break a mybe existing connection
+            // make two new ones
+
+            const node = this.cityObjects.reduce((acc, obj) => {
+                if (obj instanceof Node) {
+                    const dist = obj.pos.dist(cityObject.pos)
+                    if (dist < acc.dist) {
+                        acc = { dist, obj }
+                    }
                 }
-            })
-            sortedByDist.sort((a, b) => a.dist - b.dist);
-            sortedByDist.reverse();
+                return acc
+            }, { dist: +Infinity, obj: undefined }).obj
 
-            // index 0 and 1 are the targets
-            // first, clear their connection (if there is one)
-            // then add the new connections and the node
+            const target = this.cityObjects.reduce((acc, obj) => {
+                if(obj != node) {
+                    const dist = obj.pos.dist(cityObject.pos)
+                    if (dist < acc.dist) {
+                        acc = { dist, obj }
+                    }
+                }
+                return acc
+            }, { dist: +Infinity, obj: undefined }).obj
 
-            this.disconnect(sortedByDist[0].obj, sortedByDist[1].obj)
+            this.disconnect(target, node)
 
             this.addCityObject(cityObject)
-            this.connect(sortedByDist[0].obj, cityObject)
-            this.connect(sortedByDist[1].obj, cityObject)
-
-        } else if (cityObject instanceof Consumer) {
-            const node = this.cityObjects.find(o => o instanceof Node)
-            this.addCityObject(cityObject)
+            this.connect(target, cityObject)
             this.connect(node, cityObject)
+
+        }*/
+        if (cityObject instanceof Consumer) {
+            // get the neares node
+            const node = this.cityObjects.reduce((acc, obj) => {
+                if(obj instanceof Node) {
+                    const dist = obj.pos.dist(cityObject.pos)
+                    if(dist < acc.dist) {
+                        acc = {dist, obj}
+                    }
+                }
+                return acc
+            }, {dist: +Infinity, obj: undefined}).obj
+
+            // add the city object
+            this.addCityObject(cityObject)
+            if(node) {
+                // if the node was found, add the connection
+                this.connect(node, cityObject)
+                console.log(this)
+            }
         } else {
             throw Error("Not a city object")
         }
@@ -58,7 +86,7 @@ class City {
     }
 
     /**
-     * Clear any connection between the two nodes.
+     * Clear any connection between two nodes.
      * Does nothing if no connections exists.
      * @param {*} a one part of the connection
      * @param {*} b the other part of the connection
