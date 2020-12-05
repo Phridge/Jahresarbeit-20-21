@@ -143,11 +143,14 @@ class City {
      * The fitness is calculated by adding the lengths of all connections.
      */
     getFitness() {
-        return this.connections.reduce((acc, connection) => {
-            const a = this.cityObjects[connection[0]]
-            const b = this.cityObjects[connection[1]]
-            return acc + a.pos.dist(b.pos)
-        }, 0)
+        if(!this.fitness) {
+            this.fitness = this.connections.reduce((acc, connection) => {
+                const a = this.cityObjects[connection[0]]
+                const b = this.cityObjects[connection[1]]
+                return acc + a.pos.dist(b.pos)
+            }, 0)
+        }
+        return this.fitness
     }
 
     /**
