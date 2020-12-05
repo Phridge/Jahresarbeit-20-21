@@ -102,6 +102,28 @@ class City {
         this.connections.splice(c, 1)
     }
 
+    /**
+     * Get the connections to a city object at specified index.
+     * @param {*} index index of the city object
+     */
+    connectionsTo(index) {
+        return this.connections.filter(c => c[0] == index || c[1] == index)
+    }
+
+    /**
+     * Remove a City object and all its connectinons.
+     * @param {*} index index of removed city object
+     */
+    removeCityObject(index) {
+        this.connections = this.connections
+            .filter(c => c[0] != index && c[1] != index) // filter out the connections to the index
+            .map(con => { // redirect connections to the correct index
+                con[0] -= con[0] > index ? 0 : 1
+                con[1] -= con[1] > index ? 0 : 1
+        })
+        this.cityObjects.splice(index, 1)
+    }
+
     draw(ctx) {
         this.connections.forEach(connection => {
             ctx.beginPath();
