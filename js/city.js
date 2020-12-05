@@ -13,7 +13,7 @@ class City {
     /**
      * Adds a city object.
      * If it is a Node, it seeks the nearest two city objects and places itself in
-     * between the objects. If it is a House, it connects to the nearest
+     * between the objects. If it is a Consumer, it connects to the nearest
      * node.
      * @param {*} cityObject the city object to be added.
      */
