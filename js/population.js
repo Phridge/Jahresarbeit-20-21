@@ -9,7 +9,7 @@ class Population {
      * @param {*} example the city that gets copied and mutated
      */
     constructor(config, example) {
-        this.config = config
+        this.config = config;
         this.repopulate(example)
     }
 
@@ -38,5 +38,9 @@ class Population {
 
     repopulate(example) {
         this.cities = new Array(this.config.size).fill(example)
+    }
+
+    updateConfig(config) {
+        this.config = config;
     }
 }

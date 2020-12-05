@@ -14,10 +14,25 @@
             <p><b>Einstellungen</b></p>
             <button id="action-simulate">anhalten</button>
             <button id="action-reset">reset</button>
+            <br>
+            <label for="action-set-populations-size">Populationsgröße: </label>
+            <input id="action-set-populations-size" type="number">
+            <br>
+            <label for="action-set-position-mutation-rate">Positions-Mutationsrate: </label>
+            <input id="action-set-position-mutation-rate" type="number" step="0.05">
+            <br>
+            <label for="action-set-position-mutation-max">Positions-Mutationsmaximum: </label>
+            <input id="action-set-position-mutation-max" type="number" step="1">
+            <br>
+            <label for="action-set-connections-mutation-rate">Verbindungs-Mutationsrate </label>
+            <input id="action-set-connections-mutation-rate" type="number" step="0.05">
             <hr>
             <p><b>Auswertung</b></p>
-            <div id="result-length">Länge: </div>
+            <div id="result-length"></div>
             <div id="result-generations"></div>
+            <div id="result-consumers"></div>
+            <div id="result-nodes"></div>
+            <div id="result-connections"></div>
         </div>
         <div class="main">
             <h1>Evolutionäre Algorithmen in der Versorgungsindustrie</h1>

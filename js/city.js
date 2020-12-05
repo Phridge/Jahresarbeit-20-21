@@ -183,7 +183,7 @@ class City {
             }
         });
         this.connections.forEach(connection => {
-            if(Math.random() < config.reconnectChance) { // TODO: make chance variable
+            if(Math.random() < config.reconnectChance) {
                 // each connection connects a Node to a Consumer or a Node
                 let objA = this.cityObjects[connection[0]]
                 let objB = this.cityObjects[connection[1]]
