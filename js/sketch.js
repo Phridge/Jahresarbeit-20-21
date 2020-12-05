@@ -31,24 +31,18 @@ const sketch = () => {
     }
 
     let populationConfig = {
-        size: 100,
+        eps: 20,
+        size: 20,
         moveChance: 0.6,
-        maxMoveDelta: 10,
+        maxMoveDelta: 2,
         reconnectChance: 0.05,
     }
 
     let population = new Population(populationConfig, initialCity);
 
 
-
-    var nextPopulationRefresh = performance.now();
-
-    function draw(timestamp) {
-        // dispatch all events
-        while(queue.length > 0) {
-            queue.shift()(population);
-        }
-
+    var nextPopulationRefresh = +Infinity
+    function draw(simulate = true) {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, widht, height);
         population.getFittest().draw(ctx);
@@ -60,13 +54,26 @@ const sketch = () => {
 
         //print(population.getFittest().getFitness());
         
-        while (simulationState.simulate && timestamp > nextPopulationRefresh) {
-            population.nextPopulation();
-            nextPopulationRefresh += 1000 / config.eps
-            simulationState.generationCount++;
+        if(simulationState.simulate) {
+            let timestamp = new Date().getTime()
+            while(nextPopulationRefresh < timestamp) {
+                population.nextPopulation();
+                nextPopulationRefresh += 1000 / populationConfig.eps
+                simulationState.generationCount++;
+            }
+            requestAnimationFrame(() => draw())
         }
+    }
 
-        requestAnimationFrame(draw)
+    function startAnimation() {
+        simulationState.simulate = true
+        nextPopulationRefresh = new Date().getTime()
+        requestAnimationFrame(() => draw())
+    }
+
+    function stopAnimation() {
+        nextPopulationRefresh = 0
+        simulationState.simulate = false
     }
 
     canvas.addEventListener("click", event => {
@@ -75,22 +82,22 @@ const sketch = () => {
         let best = population.getFittest();
         best.addConnectedCityObject(obj);
         population.repopulate(best);
-        // draw(false);
+        draw(false)
     }, false);
 
     document.getElementById('action-simulate').addEventListener('click', event => {
-        simulationState.simulate = !simulationState.simulate;
         if(simulationState.simulate) {
-            // animate();
-            event.target.innerHTML = "anhalten";
-        } else {
             event.target.innerHTML = "starten";
+            stopAnimation()
+        } else {
+            event.target.innerHTML = "stoppen";
+            startAnimation()
         }
-    });
+    }, false);
 
     document.getElementById('action-reset').addEventListener('click', event => {
         population.repopulate(initialCity);
-        // draw(false);
+        draw(false);
     });
 
     document.getElementById('action-set-populations-size').value = populationConfig.size;
@@ -133,8 +140,17 @@ const sketch = () => {
         }
     });
     
+    document.getElementById('action-set-generations-per-second').value = populationConfig.eps;
+    document.getElementById('action-set-generations-per-second').addEventListener('input', event => {
+        if (event.target.value >= 1) {
+            populationConfig.eps = event.target.value;
+            population.updateConfig(populationConfig);
+        } else {
+            event.target.value = 1;
+        }
+    });
 
-    requestAnimationFrame(draw)
+    startAnimation()
 };
 
 document.addEventListener("DOMContentLoaded", sketch);
