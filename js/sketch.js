@@ -4,7 +4,6 @@ const sketch = () => {
     const height = 300;
     const widht = 500;
     const canvas = document.getElementById('canvas');
-    const queue = [];
 
     let city = new City([
         new Consumer(new Position(100, 150)), 
@@ -25,15 +24,17 @@ const sketch = () => {
     city.connect(4, 6);
     city.connect(4, 7);
     city.connect(4, 8);
+    
+    let generationCount = 0;
 
     let simulationConfig = {
         simulate: true,
     }
 
     let populationConfig = {
-        size: 10,
-        moveChance: 0.1,
-        maxMoveDelta: 2,
+        size: 100,
+        moveChance: 0.6,
+        maxMoveDelta: 10,
         reconnectChance: 0.05,
     }
 
@@ -41,34 +42,33 @@ const sketch = () => {
 
     function animate() {
         requestAnimationFrame(animate);
-        if(simulationConfig.simulate) draw();
+        if(simulationConfig.simulate) draw(true);
     }
  
-    function draw() {
-        // dispatch all event actions stored in queue
-        while(queue.length > 0) {
-            queue.shift()(population);
-        }
-
+    function draw(populate) {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, widht, height);
         
         population.getFittest().draw(ctx);
-        document.getElementById('sidebar--resultLength').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
-        population.nextPopulation();
+        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
+        document.getElementById('result-generations').innerHTML = "Generation: " + generationCount;
+
+        if(populate) {
+            population.nextPopulation();
+            generationCount++;
+        }
     }
 
     canvas.addEventListener("click", event => {
-        const clickPos = new Position(event.offsetX, event.offsetY)
-        const obj = new Consumer(clickPos)
-        queue.push(pop => {
-            let best = pop.getFittest()
-            best.addConnectedCityObject(obj)
-            pop.repopulate(best)
-        })
+        const clickPos = new Position(event.offsetX, event.offsetY);
+        const obj = new Consumer(clickPos);
+        let best = population.getFittest();
+        best.addConnectedCityObject(obj);
+        population.repopulate(best);
+        draw(false);
     }, false);
 
-    document.getElementById('sidebar--simulate').addEventListener('click', event => {
+    document.getElementById('action-simulate').addEventListener('click', event => {
         simulationConfig.simulate = !simulationConfig.simulate;
         if(simulationConfig.simulate) {
             animate();
@@ -78,13 +78,12 @@ const sketch = () => {
         }
     }, false);
 
-    document.getElementById('sidebar--reset').addEventListener('click', event => {
-        document.getElementById('sidebar--simulate').innerHTML = "anhalten";
+    document.getElementById('action-reset').addEventListener('click', event => {
+        document.getElementById('action-simulate').innerHTML = "anhalten";
         sketch();
     }, false);
 
     animate();
-    draw();
 };
 
 document.addEventListener("DOMContentLoaded", sketch);
