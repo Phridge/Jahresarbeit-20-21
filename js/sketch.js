@@ -17,16 +17,22 @@ const sketch = () => {
         new Consumer(new Point(300, 250)), 
         new Consumer(new Point(400, 100)),
     ]);
-    city.connect(0, 3);
-    city.connect(1, 3);
-    city.connect(2, 3);
-    city.connect(3, 4);
-    city.connect(4, 5);
-    city.connect(4, 6);
-    city.connect(4, 7);
+    city.connect(0, 3)
+    city.connect(1, 3)
+    city.connect(2, 3)
+    city.connect(3, 4)
+    city.connect(4, 5)
+    city.connect(4, 6)
+    city.connect(4, 7)
     city.connect(4, 8)
 
-    let population = new Population(10, 0.1, 2, city);
+    let config = {
+        moveChance: 0.1,
+        maxMoveDelta: 2,
+        reconnectChance: 0.05,
+    }
+
+    let population = new Population(10, config, city);
 
     function animate() {
         requestAnimationFrame(animate);
@@ -44,7 +50,7 @@ const sketch = () => {
         
         population.getFittest().draw(ctx);
 
-        print(population.getFittest().getFitness());
+        // print(population.getFittest().getFitness());
         population.nextPopulation();
     }
 

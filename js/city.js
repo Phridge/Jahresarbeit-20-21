@@ -164,18 +164,17 @@ class City {
     }
 
     /**
-     * Mutate a City. Currently only moves around the nodes by chance.
-     * @param {*} mutationRate the chance that a city can mutate
-     * @param {*} maxDist the maximal move delta of a node in x or y direction
+     * Mutate a City.
+     * @param {*} config chances and values to control the mutation process
      */
-    mutate(mutationRate, maxDist) {
+    mutate(config) {
         this.cityObjects.forEach(cityObject => {
-            if(cityObject instanceof Node && Math.random() < mutationRate) {
-                cityObject.moveRandomly(maxDist)
+            if(cityObject instanceof Node && Math.random() < config.moveChance) {
+                cityObject.moveRandomly(config.maxMoveDelta)
             }
         });
         this.connections.forEach(connection => {
-            if(Math.random() < 0.05) { // TODO: make chance variable
+            if(Math.random() < config.reconnectChance) { // TODO: make chance variable
                 // each connection connects a Node to a Consumer or a Node
                 let objA = this.cityObjects[connection[0]]
                 let objB = this.cityObjects[connection[1]]

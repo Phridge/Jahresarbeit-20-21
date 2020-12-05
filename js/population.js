@@ -5,15 +5,13 @@ class Population {
      * and a "prefab" city, which gets copied size-1 times.
      * The examble city is part of this population, so the node
      * position stabilizes on the best position over time.
+     * @param {*} mutationConfig configuration for the mutation process
      * @param {*} size population size
-     * @param {*} mutationRate the chance of mutations
-     * @param {*} maxMoveDelta the maximal distance a node can move
      * @param {*} example the city that gets copied and mutated
      */
-    constructor(size, mutationRate, maxMoveDelta, example) {
+    constructor(size, mutationConfig, example) {
         this.size = size;
-        this.mutationRate = mutationRate;
-        this.maxMoveDelta = maxMoveDelta;
+        this.mutationConfig = mutationConfig
         this.repopulate(example)
     }
 
@@ -34,7 +32,7 @@ class Population {
         cities[0] = fittest;
         for(var i = 1; i < this.size; i++) {
             const child = fittest.clone()
-            child.mutate(this.mutationRate, this.maxMoveDelta)
+            child.mutate(this.mutationConfig)
             cities[i] = child
         }
         this.cities = cities
