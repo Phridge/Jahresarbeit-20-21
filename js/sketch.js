@@ -27,6 +27,7 @@ const sketch = () => {
     city.connect(4, 8)
 
     let config = {
+        eps: 30,
         size: 10,
         moveChance: 0.1,
         maxMoveDelta: 2,
@@ -35,24 +36,30 @@ const sketch = () => {
 
     let population = new Population(config, city);
 
-    function animate() {
+    function animate(timestamp) {
         requestAnimationFrame(animate);
-        draw();
+        draw(timestamp || performance.now());
     }
 
-    function draw() {
-        while(queue.length > 0) { // dispatch all events
+    var nextPopulationRefresh = performance.now();
+
+    function draw(timestamp) {
+        // dispatch all events
+        while(queue.length > 0) {
             queue.shift()(population);
         }
 
         let ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, widht, height);
-        
         population.getFittest().draw(ctx);
 
-        // print(population.getFittest().getFitness());
-        population.nextPopulation();
+        //print(population.getFittest().getFitness());
+        
+        while(timestamp > nextPopulationRefresh) {
+            population.nextPopulation();
+            nextPopulationRefresh += 1000 / config.eps
+        }
     }
 
     canvas.addEventListener("click", (event) => {
