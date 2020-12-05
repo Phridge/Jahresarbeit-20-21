@@ -173,17 +173,38 @@ class City {
             if(cityObject instanceof Node && Math.random() < mutationRate) {
                 cityObject.moveRandomly(maxDist)
             }
-        }); 
+        });
+        this.connections.forEach(connection => {
+            if(Math.random() < 0.05) { // TODO: make chance variable
+                // each connection connects a Node to a Consumer or a Node
+                let objA = this.cityObjects[connection[0]]
+                let objB = this.cityObjects[connection[1]]
+                let reconnectEndpoint = objA instanceof Node ? 0 : 1
+                let referencedNodes = [
+                    objA instanceof Node && objA,
+                    objB instanceof Node && objB,
+                ].filter(o => o)
+
+                // we filter out a Node we don't connect to
+                let nodes = this.cityObjects.filter(o => o instanceof Node && !referencedNodes.includes(o))
+                
+                // if there is at least one node, reconnect to a random one
+                if(nodes.length >= 1) {
+                    connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
+                } else {
+                    // do nothing if there is only one Node
+                }
+            }
+        })
         delete this.fitness
     }
 
     /**
      * Make an exact copy of this city.
-     * Important: the connections are not cloned, but the nodes.
      */
     clone() {
         const c = new City(Array.from(this.cityObjects, o => o.clone()))
-        c.connections = this.connections
+        c.connections = Array.from(this.connections, con => Array.from(con))
         return c
     }
 }

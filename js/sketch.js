@@ -44,7 +44,7 @@ const sketch = () => {
         
         population.getFittest().draw(ctx);
 
-        // print(population.getFittest().getFitness());
+        print(population.getFittest().getFitness());
         population.nextPopulation();
     }
 
