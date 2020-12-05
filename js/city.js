@@ -159,11 +159,10 @@ class City {
      * @param {*} maxDist the maximal move delta of a node in x or y direction
      */
     mutate(mutationRate, maxDist) {
-        this.cityObjects.map(cityObject => {
+        this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < mutationRate) {
                 cityObject.moveRandomly(maxDist)
             }
-            return Object.assign(Object.create(Object.getPrototypeOf(cityObject)), cityObject);
         }); 
     }
 
@@ -175,15 +174,5 @@ class City {
         const c = new City(Array.from(this.cityObjects, o => o.clone()))
         c.connections = this.connections
         return c
-    }
-
-    /**
-     * Clones the data from the other city into this one.
-     * Reuses memory.
-     * @param {*} other the city that should be copied into this city.
-     */
-    cloneFrom(other) {
-        this.cityObjects = Array.from(other.cityObjects, o => o.clone())
-        this.connections = other.connections
     }
 }
