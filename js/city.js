@@ -157,7 +157,7 @@ class City {
                 return acc + a.pos.dist(b.pos)
             }, 0)
             // this calculation ensures that the shortest distance sum
-            // gets the most Positions
+            // gets the most points
             this.fitness = 100 / (this.fitness / 100 + 1)
         }
         return this.fitness

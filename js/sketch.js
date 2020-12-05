@@ -55,7 +55,6 @@ const sketch = () => {
         
         population.getFittest().draw(ctx);
         document.getElementById('sidebar--resultLength').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
-        // print();
         population.nextPopulation();
     }
 
