@@ -5,7 +5,7 @@ class Node {
     }
 
     moveRandomly(maxDist) {
-        this.pos = this.pos.plus(new Point(
+        this.pos = this.pos.add(new Position(
             ((Math.random() * 2) - 1) * maxDist,
             ((Math.random() * 2) - 1) * maxDist
         ))

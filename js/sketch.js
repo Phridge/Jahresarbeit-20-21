@@ -7,15 +7,15 @@ const sketch = () => {
     const queue = []
 
     let city = new City([
-        new Consumer(new Point(100, 150)), 
-        new Consumer(new Point(20, 20)), 
-        new Consumer(new Point(200, 20)), 
-        new Node    (new Point(10, 100)),
-        new Node    (new Point(400, 50)),
-        new Consumer(new Point(200, 100)), 
-        new Consumer(new Point(200, 200)), 
-        new Consumer(new Point(300, 250)), 
-        new Consumer(new Point(400, 100)),
+        new Consumer(new Position(100, 150)), 
+        new Consumer(new Position(20, 20)), 
+        new Consumer(new Position(200, 20)), 
+        new Node    (new Position(10, 100)),
+        new Node    (new Position(400, 50)),
+        new Consumer(new Position(200, 100)), 
+        new Consumer(new Position(200, 200)), 
+        new Consumer(new Position(300, 250)), 
+        new Consumer(new Position(400, 100)),
     ]);
     city.connect(0, 3)
     city.connect(1, 3)
@@ -56,7 +56,7 @@ const sketch = () => {
     }
 
     canvas.addEventListener("click", (event) => {
-        const clickPos = new Point(event.offsetX, event.offsetY)
+        const clickPos = new Position(event.offsetX, event.offsetY)
         const obj = new Consumer(clickPos)
         queue.push(pop => {
             let best = pop.getFittest()

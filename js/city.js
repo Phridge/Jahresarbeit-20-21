@@ -157,7 +157,7 @@ class City {
                 return acc + a.pos.dist(b.pos)
             }, 0)
             // this calculation ensures that the shortest distance sum
-            // gets the most points
+            // gets the most Positions
             this.fitness = 100 / (this.fitness / 100 + 1)
         }
         return this.fitness
@@ -178,7 +178,7 @@ class City {
                 // each connection connects a Node to a Consumer or a Node
                 let objA = this.cityObjects[connection[0]]
                 let objB = this.cityObjects[connection[1]]
-                let reconnectEndpoint = objA instanceof Node ? 0 : 1
+                let reconnectEndPosition = objA instanceof Node ? 0 : 1
                 let referencedNodes = [
                     objA instanceof Node && objA,
                     objB instanceof Node && objB,
@@ -189,7 +189,7 @@ class City {
                 
                 // if there is at least one node, reconnect to a random one
                 if(nodes.length >= 1) {
-                    connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
+                    connection[reconnectEndPosition] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
                 } else {
                     // do nothing if there is only one Node
                 }
