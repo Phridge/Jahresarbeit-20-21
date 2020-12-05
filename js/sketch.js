@@ -27,12 +27,13 @@ const sketch = () => {
     city.connect(4, 8)
 
     let config = {
+        size: 10,
         moveChance: 0.1,
         maxMoveDelta: 2,
         reconnectChance: 0.05,
     }
 
-    let population = new Population(10, config, city);
+    let population = new Population(config, city);
 
     function animate() {
         requestAnimationFrame(animate);
