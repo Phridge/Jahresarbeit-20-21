@@ -1,10 +1,10 @@
 const sketch = () => {
-    const print = console.log.bind(console)
+    const print = console.log.bind(console); //only for debugging
 
     const height = 300;
     const widht = 500;
     const canvas = document.getElementById('canvas');
-    const queue = []
+    const queue = [];
 
     let city = new City([
         new Consumer(new Position(100, 150)), 
@@ -17,45 +17,48 @@ const sketch = () => {
         new Consumer(new Position(300, 250)), 
         new Consumer(new Position(400, 100)),
     ]);
-    city.connect(0, 3)
-    city.connect(1, 3)
-    city.connect(2, 3)
-    city.connect(3, 4)
-    city.connect(4, 5)
-    city.connect(4, 6)
-    city.connect(4, 7)
-    city.connect(4, 8)
+    city.connect(0, 3);
+    city.connect(1, 3);
+    city.connect(2, 3);
+    city.connect(3, 4);
+    city.connect(4, 5);
+    city.connect(4, 6);
+    city.connect(4, 7);
+    city.connect(4, 8);
 
-    let config = {
+    let simulationConfig = {
+        simulate: true,
+    }
+
+    let populationConfig = {
         size: 10,
         moveChance: 0.1,
         maxMoveDelta: 2,
         reconnectChance: 0.05,
     }
 
-    let population = new Population(config, city);
+    let population = new Population(populationConfig, city);
 
     function animate() {
         requestAnimationFrame(animate);
-        draw();
+        if(simulationConfig.simulate) draw();
     }
-
+ 
     function draw() {
-        while(queue.length > 0) { // dispatch all events
+        // dispatch all event actions stored in queue
+        while(queue.length > 0) {
             queue.shift()(population);
         }
 
         let ctx = canvas.getContext('2d');
-
         ctx.clearRect(0, 0, widht, height);
         
         population.getFittest().draw(ctx);
-
         // print(population.getFittest().getFitness());
         population.nextPopulation();
     }
 
-    canvas.addEventListener("click", (event) => {
+    canvas.addEventListener("click", event => {
         const clickPos = new Position(event.offsetX, event.offsetY)
         const obj = new Consumer(clickPos)
         queue.push(pop => {
@@ -63,9 +66,25 @@ const sketch = () => {
             best.addConnectedCityObject(obj)
             pop.repopulate(best)
         })
-    }, false)
+    }, false);
 
-    animate()
+    document.getElementById('sidebar--simulate').addEventListener('click', event => {
+        simulationConfig.simulate = !simulationConfig.simulate;
+        if(simulationConfig.simulate) {
+            animate();
+            event.target.innerHTML = "anhalten";
+        } else {
+            event.target.innerHTML = "starten";
+        }
+    }, false);
+
+    document.getElementById('sidebar--reset').addEventListener('click', event => {
+        document.getElementById('sidebar--simulate').innerHTML = "anhalten";
+        sketch();
+    }, false);
+
+    animate();
+    draw();
 };
 
 document.addEventListener("DOMContentLoaded", sketch);

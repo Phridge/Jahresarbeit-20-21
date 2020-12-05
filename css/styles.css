@@ -7,3 +7,23 @@ body {
 canvas {
     border: 1px solid #333;
 }
+
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #f1f1f1;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.sidebar button {
+    margin-bottom: 4px;
+}
+
+.sidebar p {
+    margin: 0;
+    margin-bottom: 10px;
+}
