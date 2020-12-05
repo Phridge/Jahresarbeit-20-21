@@ -145,7 +145,9 @@ class City {
     }
 
     /**
-     * The fitness is calculated by adding the lengths of all connections.
+     * The fitness is calculated by adding the lengths of all connections
+     * and "flipping" the number so fitter citys have a higher score.
+     * @return The fitness score. Higher means better.
      */
     getFitness() {
         if(!this.fitness) {
@@ -154,6 +156,9 @@ class City {
                 const b = this.cityObjects[connection[1]]
                 return acc + a.pos.dist(b.pos)
             }, 0)
+            // this calculation ensures that the shortest distance sum
+            // gets the most points
+            this.fitness = 100 / (this.fitness / 100 + 1)
         }
         return this.fitness
     }

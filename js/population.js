@@ -20,7 +20,7 @@ class Population {
     getFittest() {
         let currentBest = this.cities[0]; // choose one randomly
         this.cities.forEach(city => {
-            if(currentBest.getFitness() > city.getFitness()) {
+            if(city.getFitness() > currentBest.getFitness()) {
                 currentBest = city;
             }
         });
