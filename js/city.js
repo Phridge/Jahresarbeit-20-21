@@ -163,6 +163,15 @@ class City {
         return this.fitness
     }
 
+    getLength() {
+        const length = this.connections.reduce((acc, connection) => {
+            const a = this.cityObjects[connection[0]];
+            const b = this.cityObjects[connection[1]];
+            return acc + a.pos.dist(b.pos);
+        }, 0);
+        return length;
+    }
+
     /**
      * Mutate a City.
      * @param {*} config chances and values to control the mutation process
@@ -174,11 +183,11 @@ class City {
             }
         });
         this.connections.forEach(connection => {
-            if(Math.random() < config.reconnectChance) { // TODO: make chance variable
+            if(Math.random() < config.reconnectChance) {
                 // each connection connects a Node to a Consumer or a Node
                 let objA = this.cityObjects[connection[0]]
                 let objB = this.cityObjects[connection[1]]
-                let reconnectEndpoint = objA instanceof Node ? 0 : 1
+                let reconnectEndPosition = objA instanceof Node ? 0 : 1
                 let referencedNodes = [
                     objA instanceof Node && objA,
                     objB instanceof Node && objB,
@@ -189,7 +198,7 @@ class City {
                 
                 // if there is at least one node, reconnect to a random one
                 if(nodes.length >= 1) {
-                    connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
+                    connection[reconnectEndPosition] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
                 } else {
                     // do nothing if there is only one Node
                 }
