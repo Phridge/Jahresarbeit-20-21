@@ -7,6 +7,7 @@ class City {
     addCityObject(cityObject) {
         const index = this.cityObjects.length
         this.cityObjects.push(cityObject)
+        delete this.fitness
         return index
     }
 
@@ -72,6 +73,7 @@ class City {
         } else {
             throw Error("Not a city object")
         }
+        delete this.fitness
     }
 
     /**
@@ -89,6 +91,7 @@ class City {
      */
     connect(a, b) {
         this.connections.push([a, b]);
+        delete this.fitness
     }
 
     /**
@@ -100,6 +103,7 @@ class City {
     disconnect(a, b) {
         let c = this.connections.findIndex(c => c == [a, b] || c == [b, a])
         this.connections.splice(c, 1)
+        delete this.fitness
     }
 
     /**
@@ -122,6 +126,7 @@ class City {
                 con[1] -= con[1] > index ? 0 : 1
         })
         this.cityObjects.splice(index, 1)
+        delete this.fitness
     }
 
     draw(ctx) {
@@ -164,6 +169,7 @@ class City {
                 cityObject.moveRandomly(maxDist)
             }
         }); 
+        delete this.fitness
     }
 
     /**
