@@ -163,6 +163,15 @@ class City {
         return this.fitness
     }
 
+    getLength() {
+        const length = this.connections.reduce((acc, connection) => {
+            const a = this.cityObjects[connection[0]];
+            const b = this.cityObjects[connection[1]];
+            return acc + a.pos.dist(b.pos);
+        }, 0);
+        return length;
+    }
+
     /**
      * Mutate a City.
      * @param {*} config chances and values to control the mutation process
