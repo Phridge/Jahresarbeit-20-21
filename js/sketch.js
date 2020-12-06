@@ -72,7 +72,6 @@ const sketch = () => {
     }
 
     function stopAnimation() {
-        nextPopulationRefresh = 0
         simulationState.simulate = false
     }
 
@@ -97,6 +96,7 @@ const sketch = () => {
 
     document.getElementById('action-reset').addEventListener('click', event => {
         population.repopulate(initialCity);
+        simulationState.generationCount = 0;
         draw(false);
     });
 
