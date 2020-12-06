@@ -13,6 +13,10 @@ const sketch = () => {
 
         ctx.fillStyle = '#505050';
         ctx.fillRect(40, 40, 100, 100);
+
+        if(simulationState.isSimulating) {
+            requestAnimationFrame(draw)
+        }
     }
 
     function startSimulation() {
