@@ -36,7 +36,7 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 2,
         reconnectChance: 0.05,
-        nodePenalty: 5,
+        nodePenalty: 0,
         connectionSplitChance: 0.00,
     }
 

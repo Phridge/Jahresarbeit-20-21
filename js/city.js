@@ -179,6 +179,7 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
+        // move
         this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < config.moveChance) {
                 cityObject.moveRandomly(config.maxMoveDelta)

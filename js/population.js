@@ -24,12 +24,12 @@ class Population {
     }
 
     nextPopulation() {
-        const fittest = this.getFittest()
-        const cities = new Array(this.config.size)
+        let fittest = this.getFittest()
+        let cities = new Array(this.config.size)
 
         cities[0] = fittest;
         for(var i = 1; i < this.config.size; i++) {
-            const child = fittest.clone()
+            let child = fittest.clone()
             child.mutate(this.config)
             cities[i] = child
         }
