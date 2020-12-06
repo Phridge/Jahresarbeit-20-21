@@ -152,6 +152,22 @@ const sketch = () => {
         }
     });
 
+    document.getElementById('action-set-node-penalty').value = populationConfig.nodePenalty;
+    document.getElementById('action-set-node-penalty').addEventListener('input', event => {
+        if (event.target.value >= 0) {
+            populationConfig.nodePenalty = event.target.value;
+            population.updateConfig(populationConfig);
+        }
+    });
+
+    document.getElementById('action-set-node-mutation-rate').value = populationConfig.connectionMutateChance;
+    document.getElementById('action-set-node-mutation-rate').addEventListener('input', event => {
+        if (event.target.value >= 0) {
+            populationConfig.connectionMutateChance = event.target.value;
+            population.updateConfig(populationConfig);
+        }
+    });
+
     startAnimation()
 };
 
