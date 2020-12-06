@@ -23,7 +23,7 @@ class Population {
         return currentBest;
     }
 
-    nextPopulation() {
+    /*nextPopulation() {
         let fittest = this.getFittest()
         let cities = new Array(this.config.size)
 
@@ -34,6 +34,29 @@ class Population {
             cities[i] = child
         }
         this.cities = cities
+    }*/
+
+    nextPopulation() {
+        this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config))
+        let newCities = new Array(this.config.size)
+
+        for(var lo = 0, hi = this.config.size -1; hi > lo; hi--, lo++) {
+            let parent = this.cities[lo]
+            let child = parent.clone()
+
+            child.mutate(this.config)
+
+            newCities[lo] = parent
+            newCities[hi] = child
+
+            if(lo >= this.cities.length -1) {
+                // points to the last city
+                lo--
+            }
+        }
+
+        // console.log(newCities.map(c => c.getFitness(this.config)));
+        this.cities = newCities
     }
 
     repopulate(example) {
