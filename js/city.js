@@ -147,15 +147,17 @@ class City {
     /**
      * The fitness is calculated by adding the lengths of all connections
      * and "flipping" the number so fitter citys have a higher score.
+     * @param {*} config configuration data is required for correct calculation.
      * @return The fitness score. Higher means better.
      */
-    getFitness() {
+    getFitness(config) {
         if(!this.fitness) {
             this.fitness = this.connections.reduce((acc, connection) => {
                 const a = this.cityObjects[connection[0]]
                 const b = this.cityObjects[connection[1]]
                 return acc + a.pos.dist(b.pos)
             }, 0)
+            this.fitness += this.cityObjects.filter(o => o instanceof Node).length * config.nodePenalty
             // this calculation ensures that the shortest distance sum
             // gets the most points
             this.fitness = 100 / (this.fitness / 100 + 1)
@@ -182,26 +184,34 @@ class City {
                 cityObject.moveRandomly(config.maxMoveDelta)
             }
         });
+        // reconnect
+        this.connections.filter(connection => {
+            let a = this.cityObjects[connection[0]]
+            let b = this.cityObjects[connection[1]]
+            return ((a instanceof Node && b instanceof Consumer) ||
+                (a instanceof Consumer && b instanceof Node)) &&
+                Math.random() < config.reconnectChance
+        }).forEach(connection => {
+            let reconnectEndpoint = this.cityObjects[connection[0]] instanceof Node ? 0 : 1
+            // we filter out all nodes available
+            let nodes = this.cityObjects.filter(o => o instanceof Node)
+            // reconnect to some random node, could be the current one too
+            connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
+        })
+        // split
         this.connections.forEach(connection => {
-            if(Math.random() < config.reconnectChance) {
-                // each connection connects a Node to a Consumer or a Node
-                let objA = this.cityObjects[connection[0]]
-                let objB = this.cityObjects[connection[1]]
-                let reconnectEndPosition = objA instanceof Node ? 0 : 1
-                let referencedNodes = [
-                    objA instanceof Node && objA,
-                    objB instanceof Node && objB,
-                ].filter(o => o)
+            if (Math.random() < config.connectionSplitChance) {
+                // make a new node thats between the two endpoints
+                let node = new Node(
+                    this.cityObjects[connection[0]].pos.add(this.cityObjects[connection[1]].pos).mul(1 / 2)
+                )
+                let nodeIndex = this.addCityObject(node)
 
-                // we filter out a Node we don't connect to
-                let nodes = this.cityObjects.filter(o => o instanceof Node && !referencedNodes.includes(o))
-                
-                // if there is at least one node, reconnect to a random one
-                if(nodes.length >= 1) {
-                    connection[reconnectEndPosition] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
-                } else {
-                    // do nothing if there is only one Node
-                }
+                // modify the first connection
+                let oldEndpoint = connection[0]
+                connection[0] = nodeIndex
+                // and add a new one
+                this.connect(oldEndpoint, nodeIndex)
             }
         })
         delete this.fitness

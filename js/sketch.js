@@ -36,13 +36,15 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 2,
         reconnectChance: 0.05,
+        nodePenalty: 5,
+        connectionSplitChance: 0.00,
     }
 
     let population = new Population(populationConfig, initialCity);
 
 
     var nextPopulationRefresh = +Infinity
-    function draw(simulate = true) {
+    function draw() {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, widht, height);
         population.getFittest().draw(ctx);
@@ -52,7 +54,7 @@ const sketch = () => {
         document.getElementById('result-nodes').innerHTML = "Knoten: " + population.getFittest().cityObjects.filter(obj => obj instanceof Node).length;
         document.getElementById('result-connections').innerHTML = "Verbindungen: " + population.getFittest().connections.length;
 
-        //print(population.getFittest().getFitness());
+        //print(population.getFittest().getFitness(populationConfig));
         
         if(simulationState.simulate) {
             let timestamp = new Date().getTime()
@@ -81,7 +83,7 @@ const sketch = () => {
         let best = population.getFittest();
         best.addConnectedCityObject(obj);
         population.repopulate(best);
-        draw(false)
+        draw()
     }, false);
 
     document.getElementById('action-simulate').addEventListener('click', event => {
@@ -97,7 +99,7 @@ const sketch = () => {
     document.getElementById('action-reset').addEventListener('click', event => {
         population.repopulate(initialCity);
         simulationState.generationCount = 0;
-        draw(false);
+        draw();
     });
 
     document.getElementById('action-set-populations-size').value = populationConfig.size;
