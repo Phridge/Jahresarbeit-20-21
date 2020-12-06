@@ -56,25 +56,25 @@ const sketch = () => {
 
         //print(population.getFittest().getFitness(populationConfig));
         
-        if(simulationState.simulate) {
+        if(simulationState.isSimulating) {
             let timestamp = new Date().getTime()
             while(nextPopulationRefresh < timestamp) {
                 population.nextPopulation();
                 nextPopulationRefresh += 1000 / populationConfig.eps
                 simulationState.generationCount++;
             }
-            requestAnimationFrame(() => draw())
+            requestAnimationFrame(draw)
         }
     }
 
-    function startAnimation() {
-        simulationState.simulate = true
+    function startSimulation() {
+        simulationState.isSimulating = true
         nextPopulationRefresh = new Date().getTime()
-        requestAnimationFrame(() => draw())
+        requestAnimationFrame(draw);
     }
 
-    function stopAnimation() {
-        simulationState.simulate = false
+    function stopSimulation() {
+        simulationState.isSimulating = false
     }
 
     canvas.addEventListener("click", event => {
@@ -87,12 +87,12 @@ const sketch = () => {
     }, false);
 
     document.getElementById('action-simulate').addEventListener('click', event => {
-        if(simulationState.simulate) {
+        if(simulationState.isSimulating) {
             event.target.innerHTML = "starten";
-            stopAnimation()
+            stopSimulation()
         } else {
             event.target.innerHTML = "stoppen";
-            startAnimation()
+            startSimulation()
         }
     }, false);
 
@@ -168,7 +168,7 @@ const sketch = () => {
         }
     });
 
-    startAnimation()
+    startSimulation()
 };
 
 document.addEventListener("DOMContentLoaded", sketch);
