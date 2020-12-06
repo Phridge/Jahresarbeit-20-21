@@ -120,10 +120,11 @@ class City {
      */
     removeCityObject(index) {
         this.connections = this.connections
-            .filter(c => c[0] != index && c[1] != index) // filter out the connections to the index
+            .filter(con => con[0] != index && con[1] != index) // filter out the connections to the index
             .map(con => { // redirect connections to the correct index
-                con[0] -= con[0] > index ? 0 : 1
-                con[1] -= con[1] > index ? 0 : 1
+                con[0] -= con[0] > index ? 1 : 0
+                con[1] -= con[1] > index ? 1 : 0
+                return con
         })
         this.cityObjects.splice(index, 1)
         delete this.fitness
@@ -179,6 +180,38 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
+        // merge
+        if(Math.random() < config.connectionMutateChance) {
+            let nodes = this.cityObjects.filter(cityObject => cityObject instanceof Node)
+
+            let node = nodes[Math.floor(Math.random() * nodes.length)]
+            let nodeIndex = this.getIndex(node)
+            let connections = this.connectionsTo(nodeIndex)
+
+            if(connections.length == 2) {
+                let cityObjIndexA = connections[0][0] == nodeIndex ? connections[0][1] : connections[0][0]
+                let cityObjIndexB = connections[1][0] == nodeIndex ? connections[1][1] : connections[1][0]
+                
+                this.connect(cityObjIndexA, cityObjIndexB)
+                this.removeCityObject(nodeIndex)
+            }
+        }
+        // split
+        this.connections.forEach(connection => {
+            if (Math.random() < config.connectionMutateChance) {
+                // make a new node thats between the two endpoints
+                let node = new Node(
+                    this.cityObjects[connection[0]].pos.add(this.cityObjects[connection[1]].pos).mul(1 / 2)
+                )
+                let nodeIndex = this.addCityObject(node)
+
+                // modify the first connection
+                let oldEndpoint = connection[0]
+                connection[0] = nodeIndex
+                // and add a new one
+                this.connect(oldEndpoint, nodeIndex)
+            }
+        })
         // move
         this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < config.moveChance) {
@@ -198,22 +231,6 @@ class City {
             let nodes = this.cityObjects.filter(o => o instanceof Node)
             // reconnect to some random node, could be the current one too
             connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
-        })
-        // split
-        this.connections.forEach(connection => {
-            if (Math.random() < config.connectionSplitChance) {
-                // make a new node thats between the two endpoints
-                let node = new Node(
-                    this.cityObjects[connection[0]].pos.add(this.cityObjects[connection[1]].pos).mul(1 / 2)
-                )
-                let nodeIndex = this.addCityObject(node)
-
-                // modify the first connection
-                let oldEndpoint = connection[0]
-                connection[0] = nodeIndex
-                // and add a new one
-                this.connect(oldEndpoint, nodeIndex)
-            }
         })
         delete this.fitness
     }
