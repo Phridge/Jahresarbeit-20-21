@@ -190,17 +190,24 @@ class City {
     mutate(config) {
         // merge
         if(Math.random() < config.connectionMutateChance) {
+            // filter out all nodes
             let nodes = this.cityObjects.filter(cityObject => cityObject instanceof Node)
 
+            // select a random one
             let node = nodes[Math.floor(Math.random() * nodes.length)]
             let nodeIndex = this.getIndex(node)
             let connections = this.connectionsTo(nodeIndex)
 
+            // merge if two connecting neighbours
             if(connections.length == 2) {
                 let cityObjIndexA = connections[0][0] == nodeIndex ? connections[0][1] : connections[0][0]
                 let cityObjIndexB = connections[1][0] == nodeIndex ? connections[1][1] : connections[1][0]
                 
                 this.connect(cityObjIndexA, cityObjIndexB)
+                this.removeCityObject(nodeIndex)
+            }
+            // remove if lonesome node 
+            else if(connections.length <= 1) {
                 this.removeCityObject(nodeIndex)
             }
         }
