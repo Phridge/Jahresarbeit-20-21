@@ -60,7 +60,7 @@ class Population {
     }
 
     repopulate(example) {
-        this.cities = new Array(this.config.size).fill(example)
+        this.cities = (this.cities || new Array(this.config.size).fill(null)).map(_ => example.clone())
     }
 
     updateConfig(config) {

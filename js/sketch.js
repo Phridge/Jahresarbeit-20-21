@@ -28,10 +28,11 @@ const sketch = () => {
     let simulationState = {
         simulate: true,
         generationCount: 0,
+        eps: 20,
+        isDragging: null,
     }
 
     let populationConfig = {
-        eps: 20,
         size: 20,
         moveChance: 0.6,
         maxMoveDelta: 5,
@@ -60,31 +61,96 @@ const sketch = () => {
             let timestamp = new Date().getTime()
             while(nextPopulationRefresh < timestamp) {
                 population.nextPopulation();
-                nextPopulationRefresh += 1000 / populationConfig.eps
+                nextPopulationRefresh += 1000 / simulationState.eps
                 simulationState.generationCount++;
             }
-            requestAnimationFrame(draw)
         }
+        
+        if(simulationState.isDragging) {
+            let target = simulationState.isDragging.targetObject
+            target.pos = simulationState.isDragging.currentPos.add(simulationState.isDragging.offset)
+        }
+
+        requestAnimationFrame(draw)
     }
 
     function startSimulation() {
         simulationState.isSimulating = true
         nextPopulationRefresh = new Date().getTime()
-        requestAnimationFrame(draw);
     }
 
     function stopSimulation() {
         simulationState.isSimulating = false
     }
 
+    function startDragging(beginPos, offset, targetObject, targetCity) {
+        let continueSimulating = simulationState.isSimulating
+        if(simulationState.isSimulating) {
+            stopSimulation()
+        }
+
+        simulationState.isDragging = {
+            currentPos: beginPos,
+            offset,
+            targetObject,
+            targetCity,
+            continueSimulating,
+        }
+    }
+
+    function stopDragging() {
+        let continueSimulating = simulationState.isDragging.continueSimulating
+
+        population.repopulate(simulationState.isDragging.targetCity)
+        simulationState.isDragging = null
+        
+        if (continueSimulating) {
+            startSimulation()
+        }
+    }
+
     canvas.addEventListener("click", event => {
-        const clickPos = new Position(event.offsetX, event.offsetY);
-        const obj = new Consumer(clickPos);
-        let best = population.getFittest();
-        best.addConnectedCityObject(obj);
-        population.repopulate(best);
-        draw()
+        if(simulationState.isDragging) {
+            // dropped the city object previously dragged
+            stopDragging()
+        } else {
+            // clicked
+            let clickPos = new Position(event.offsetX, event.offsetY);
+            let obj = new Consumer(clickPos);
+            let best = population.getFittest();
+            best.addConnectedCityObject(obj);
+            population.repopulate(best);
+            draw()
+        }
     }, false);
+
+    canvas.addEventListener("mousedown", event => {
+        let downPos = new Position(event.offsetX, event.offsetY)
+        let targetCity = population.getFittest()
+        let targetObject = targetCity.getCityObjectNear(downPos)
+        if(targetObject) {
+            // we're isDragging something now
+            startDragging(
+                targetObject.pos,
+                targetObject.pos.sub(downPos),
+                targetObject,
+                targetCity
+            );
+        }
+    })
+
+    canvas.addEventListener("mousemove", event => {
+        if(simulationState.isDragging) {
+            let currentPos = new Position(event.offsetX, event.offsetY)
+            simulationState.isDragging.currentPos = currentPos
+        }
+    })
+
+    canvas.addEventListener("mouseout", () => {
+        if(simulationState.isDragging) {
+            stopDragging()
+        }
+    })
 
     document.getElementById('action-simulate').addEventListener('click', event => {
         if(simulationState.isSimulating) {
@@ -99,7 +165,6 @@ const sketch = () => {
     document.getElementById('action-reset').addEventListener('click', event => {
         population.repopulate(initialCity);
         simulationState.generationCount = 0;
-        draw();
     });
 
     document.getElementById('action-set-populations-size').value = populationConfig.size;
@@ -142,10 +207,10 @@ const sketch = () => {
         }
     });
     
-    document.getElementById('action-set-generations-per-second').value = populationConfig.eps;
+    document.getElementById('action-set-generations-per-second').value = simulationState.eps;
     document.getElementById('action-set-generations-per-second').addEventListener('input', event => {
         if (event.target.value >= 1) {
-            populationConfig.eps = event.target.value;
+            simulationState.eps = event.target.value;
             population.updateConfig(populationConfig);
         } else {
             event.target.value = 1;
@@ -168,6 +233,7 @@ const sketch = () => {
         }
     });
 
+    requestAnimationFrame(draw)
     startSimulation()
 };
 

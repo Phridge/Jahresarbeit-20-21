@@ -16,10 +16,17 @@ class Node {
         ctx.fillRect(this.pos.x - this.width/2, this.pos.y - this.height/2, this.width, this.height)
     }
 
+    containsPosition(position) {
+        let upperLeft = new Position(this.pos.x - this.width / 2, this.pos.y - this.height / 2)
+        let lowerRight = new Position(this.pos.x + this.width / 2, this.pos.y + this.height / 2)
+        return position.x >= upperLeft.x && position.x <= lowerRight.x
+            && position.y >= upperLeft.y && position.y <= lowerRight.y
+    }
+
     clone() {
         return new Node(this.pos)
     }
 }
 
-Node.prototype.width = 5
-Node.prototype.height = 5
+Node.prototype.width = 7
+Node.prototype.height = 7

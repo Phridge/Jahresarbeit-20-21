@@ -130,6 +130,14 @@ class City {
         delete this.fitness
     }
 
+    /**
+     * Returns the city object that contains the specified coordinates.
+     * @param {*} position the point on the screen
+     */
+    getCityObjectNear(position) {
+        return this.cityObjects.find(obj => obj.containsPosition(position))
+    }
+
     draw(ctx) {
         this.connections.forEach(connection => {
             ctx.beginPath();
