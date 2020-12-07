@@ -34,9 +34,9 @@ const sketch = () => {
         eps: 20,
         size: 20,
         moveChance: 0.6,
-        maxMoveDelta: 2,
+        maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 3,
+        nodePenalty: 5,
         connectionMutateChance: 0.02,
     }
 
