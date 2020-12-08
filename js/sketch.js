@@ -1,6 +1,5 @@
 const sketch = () => {
-    const print = console.log.bind(console); //only for debugging
-
+    
     const height = 300;
     const width = 500;
     const canvas = document.getElementById('canvas');
