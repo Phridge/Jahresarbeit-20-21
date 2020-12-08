@@ -2,7 +2,7 @@ const sketch = () => {
     const print = console.log.bind(console); //only for debugging
 
     const height = 300;
-    const widht = 500;
+    const width = 500;
     const canvas = document.getElementById('canvas');
 
     let initialCity = new City([
@@ -47,7 +47,7 @@ const sketch = () => {
     var nextPopulationRefresh = +Infinity
     function draw() {
         let ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, widht, height);
+        ctx.clearRect(0, 0, width, height);
         population.getFittest().draw(ctx);
         document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
         document.getElementById('result-generations').innerHTML = "Generation: " + simulationState.generationCount;
@@ -103,7 +103,7 @@ const sketch = () => {
 
         population.repopulate(simulationState.isDragging.targetCity)
         simulationState.isDragging = null
-        
+
         if (continueSimulating) {
             startSimulation()
         }
@@ -129,7 +129,7 @@ const sketch = () => {
         let targetCity = population.getFittest()
         let targetObject = targetCity.getCityObjectNear(downPos)
         if(targetObject) {
-            // we're isDragging something now
+            // we're dragging something now
             startDragging(
                 targetObject.pos,
                 targetObject.pos.sub(downPos),

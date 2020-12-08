@@ -3,7 +3,7 @@ class Population {
     /**
      * Create a new Population with mutation characteristics
      * and a "prefab" city, which gets copied size-1 times.
-     * The examble city is part of this population, so the node
+     * The example city is part of this population, so the node
      * position stabilizes on the best position over time.
      * @param {*} config configurations that can be controlled by the user
      * @param {*} example the city that gets copied and mutated

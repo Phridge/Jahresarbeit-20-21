@@ -19,59 +19,22 @@ class City {
      * @param {*} cityObject the city object to be added.
      */
     addConnectedCityObject(cityObject) {
-        /*if(cityObject instanceof Node) { // doesn't work
-            // get the nearest Node
-            // get the nearest Consumer
-            // break a mybe existing connection
-            // make two new ones
-
-            const node = this.cityObjects.reduce((acc, obj) => {
-                if (obj instanceof Node) {
-                    const dist = obj.pos.dist(cityObject.pos)
-                    if (dist < acc.dist) {
-                        acc = { dist, obj }
-                    }
+        // get the nearest node
+        const node = this.cityObjects.reduce((acc, obj) => {
+            if(obj instanceof Node) {
+                const dist = obj.pos.dist(cityObject.pos)
+                if(dist < acc.dist) {
+                    acc = {dist, obj}
                 }
-                return acc
-            }, { dist: +Infinity, obj: undefined }).obj
-
-            const target = this.cityObjects.reduce((acc, obj) => {
-                if(obj != node) {
-                    const dist = obj.pos.dist(cityObject.pos)
-                    if (dist < acc.dist) {
-                        acc = { dist, obj }
-                    }
-                }
-                return acc
-            }, { dist: +Infinity, obj: undefined }).obj
-
-            this.disconnect(target, node)
-
-            this.addCityObject(cityObject)
-            this.connect(target, cityObject)
-            this.connect(node, cityObject)
-
-        }*/
-        if (cityObject instanceof Consumer) {
-            // get the neares node
-            const node = this.cityObjects.reduce((acc, obj) => {
-                if(obj instanceof Node) {
-                    const dist = obj.pos.dist(cityObject.pos)
-                    if(dist < acc.dist) {
-                        acc = {dist, obj}
-                    }
-                }
-                return acc
-            }, {dist: +Infinity, obj: undefined}).obj
-
-            // add the city object
-            const cityObjectIndex = this.addCityObject(cityObject)
-            if(node) {
-                // if the node was found, add the connection
-                this.connect(this.getIndex(node), cityObjectIndex)
             }
-        } else {
-            throw Error("Not a city object")
+            return acc
+        }, {dist: +Infinity, obj: undefined}).obj
+
+        // add the city object
+        const cityObjectIndex = this.addCityObject(cityObject)
+        if(node) {
+            // if the node was found, add the connection
+            this.connect(this.getIndex(node), cityObjectIndex)
         }
         delete this.fitness
     }
@@ -115,7 +78,7 @@ class City {
     }
 
     /**
-     * Remove a City object and all its connectinons.
+     * Remove a City object and all its connections.
      * @param {*} index index of removed city object
      */
     removeCityObject(index) {
@@ -155,7 +118,7 @@ class City {
 
     /**
      * The fitness is calculated by adding the lengths of all connections
-     * and "flipping" the number so fitter citys have a higher score.
+     * and "flipping" the number so fitter cities have a higher score.
      * @param {*} config configuration data is required for correct calculation.
      * @return The fitness score. Higher means better.
      */
@@ -198,7 +161,7 @@ class City {
             let nodeIndex = this.getIndex(node)
             let connections = this.connectionsTo(nodeIndex)
 
-            // merge if two connecting neighbours
+            // merge if two connecting neighbors
             if(connections.length == 2) {
                 let cityObjIndexA = connections[0][0] == nodeIndex ? connections[0][1] : connections[0][0]
                 let cityObjIndexB = connections[1][0] == nodeIndex ? connections[1][1] : connections[1][0]

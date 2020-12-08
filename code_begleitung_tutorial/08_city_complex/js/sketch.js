@@ -1,5 +1,5 @@
 const sketch = () => {
-    const widht = 500;
+    const width = 500;
     const height = 300;
     const canvas = document.getElementById('canvas');
 
@@ -17,7 +17,7 @@ const sketch = () => {
 
     function draw() {
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, widht, height);
+        ctx.clearRect(0, 0, width, height);
 
         city.draw(ctx);
     }
