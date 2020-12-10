@@ -57,7 +57,7 @@ const sketch = () => {
             color: "#222222"
         },
         connection: {
-            width: 1,
+            width: 2,
             color: "#000000"
         },
     }

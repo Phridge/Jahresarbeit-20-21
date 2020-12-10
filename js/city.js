@@ -102,6 +102,7 @@ class City {
     }
 
     draw(ctx, drawConfig) {
+        ctx.lineWidth = drawConfig.connection.width
         this.connections.forEach(connection => {
             ctx.beginPath();
             ctx.strokeStyle = drawConfig.connection.color;
