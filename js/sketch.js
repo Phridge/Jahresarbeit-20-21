@@ -40,6 +40,28 @@ const sketch = () => {
         connectionMutateChance: 0.02,
     }
 
+    let drawConfig = {
+        node: {
+            width: 7,
+            height: 7,
+            color: '#000000',
+        },
+        consumer: {
+            width: 20,
+            height: 20,
+            color: '#dfac20',
+        },
+        dispatcher: {
+            width: 20,
+            height: 30,
+            color: "#222222"
+        },
+        connection: {
+            width: 1,
+            color: "#000000"
+        },
+    }
+
     let population = new Population(populationConfig, initialCity);
 
 
@@ -47,7 +69,7 @@ const sketch = () => {
     function draw() {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        population.getFittest().draw(ctx);
+        population.getFittest().draw(ctx, drawConfig);
         document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
         document.getElementById('result-generations').innerHTML = "Generation: " + simulationState.generationCount;
         document.getElementById('result-consumers').innerHTML = "Häuser: " + population.getFittest().cityObjects.filter(obj => obj instanceof Consumer).length;

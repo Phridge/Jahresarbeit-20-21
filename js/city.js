@@ -97,14 +97,14 @@ class City {
      * Returns the city object that contains the specified coordinates.
      * @param {*} position the point on the screen
      */
-    getCityObjectNear(position) {
-        return this.cityObjects.find(obj => obj.containsPosition(position))
+    getCityObjectNear(position, drawConfig) {
+        return this.cityObjects.find(obj => obj.containsPosition(position, drawConfig))
     }
 
-    draw(ctx) {
+    draw(ctx, drawConfig) {
         this.connections.forEach(connection => {
             ctx.beginPath();
-            ctx.strokeStyle = '#000000';
+            ctx.strokeStyle = drawConfig.connection.color;
             let a = this.cityObjects[connection[0]];
             let b = this.cityObjects[connection[1]];
             ctx.moveTo(a.pos.x, a.pos.y);
@@ -112,7 +112,7 @@ class City {
             ctx.stroke();
         });
         this.cityObjects.forEach(cityObject => {
-            cityObject.draw(ctx);
+            cityObject.draw(ctx, drawConfig);
         });
     }
 

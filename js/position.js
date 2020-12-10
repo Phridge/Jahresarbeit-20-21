@@ -21,4 +21,9 @@ class Position {
         const dy = this.y - to.y
         return Math.sqrt(dx * dx + dy * dy)
     }
+
+    isInsideRect(upperLeft, lowerRight) {
+        return this.x >= upperLeft.x && this.x <= lowerRight.x
+            && this.y >= upperLeft.y && this.y <= lowerRight.y
+    }
 }
