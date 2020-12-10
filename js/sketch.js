@@ -27,7 +27,7 @@ const sketch = () => {
     let simulationState = {
         simulate: true,
         generationCount: 0,
-        eps: 20,
+        eps: 5,
         isDragging: null,
     }
 
@@ -51,7 +51,7 @@ const sketch = () => {
             height: 20,
             color: '#dfac20',
         },
-        dispatcher: {
+        transformator: {
             width: 20,
             height: 30,
             color: "#222222"
