@@ -1,7 +1,7 @@
-class Node {
+class Node extends CityObject {
 
     constructor(pos) {
-        this.pos = pos
+        super(pos)
     }
 
     moveRandomly(maxDist) {
