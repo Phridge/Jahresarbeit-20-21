@@ -7,12 +7,29 @@ class Consumer extends CityObject {
     draw(ctx, drawConfig) {
         let w = drawConfig.consumer.width
         let h = drawConfig.consumer.height
+        let anchor = this.pos
+        let house = this.housePos()
+
+        // line from house to anchor
+        ctx.beginPath()
+        ctx.strokeStyle = drawConfig.connection.color
+        ctx.moveTo(anchor.x, anchor.y)
+        ctx.lineTo(house.x, house.y)
+        ctx.stroke()
+
+        // anchor
+        let wNode = drawConfig.node.width
+        let hNode = drawConfig.node.height
+        ctx.fillStyle = drawConfig.node.color
+        ctx.fillRect(anchor.x - wNode / 2, anchor.y - hNode / 2, wNode, hNode)
+
+        // self
         ctx.fillStyle = drawConfig.consumer.color
-        ctx.fillRect(this.pos.x - w / 2, this.pos.y - h / 2, w, h)
+        ctx.fillRect(house.x - w / 2, house.y - h / 2, w, h)
     }
 
-    anchor() {
-        return this.pos.sub(new Position(0, -30))
+    housePos() {
+        return this.pos.add(new Position(0, -20))
     }
 
     containsPosition(position, drawConfig) {

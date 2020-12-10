@@ -49,6 +49,7 @@ const sketch = () => {
         consumer: {
             width: 20,
             height: 20,
+            anchorLength: 15,
             color: '#dfac20',
         },
         transformator: {

@@ -152,6 +152,7 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
+        // TODO: reduce to 
         // merge
         if(Math.random() < config.connectionMutateChance) {
             // filter out all nodes
