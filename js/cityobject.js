@@ -19,12 +19,4 @@ class CityObject {
     containsPosition(_pos, _drawConfig) {
         return false;
     }
-
-    doNotCross() {
-        return false;
-    }
-
-    moveRandomly(_maxDist) {
-        // overridden in subclasses
-    }
 }

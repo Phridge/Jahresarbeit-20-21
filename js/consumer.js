@@ -24,10 +24,6 @@ class Consumer extends CityObject {
         )
     }
 
-    doNotCross() {
-        return true;
-    }
-
     clone() {
         return new Consumer(this.pos)
     }
