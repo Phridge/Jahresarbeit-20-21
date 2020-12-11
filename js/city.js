@@ -77,6 +77,24 @@ class City {
         return this.connections.filter(c => c[0] == index || c[1] == index)
     }
 
+    neighborsOf(index) {
+        return this.connectionsTo(index).map(con => con[0] == index ? con[1] : con[0])
+    }
+
+    /**
+     * Counts the connections to some index
+     * @param {*} index the index of the city object
+     */
+    connectionCountTo(index) {
+        var count = 0
+        this.connections.forEach(con => {
+            if(con[0] == index || con[1] == index) {
+                count++
+            }
+        })
+        return count
+    }
+
     /**
      * Remove a City object and all its connections.
      * @param {*} index index of removed city object
@@ -152,7 +170,6 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
-        // TODO: reduce to 
         // merge
         if(Math.random() < config.connectionMutateChance) {
             // filter out all nodes
@@ -199,6 +216,26 @@ class City {
             }
         });
         // reconnect
+        // reconnect a connection to one of its neighbors
+        /*this.connections.forEach(connection => {
+            if(Math.random() < config.reconnectChance) {
+                var objIndex, reconnectEndpoint;
+                if(Math.random() < 0.5) {
+                    objIndex = connection[0]
+                    reconnectEndpoint = 1
+                } else {
+                    objIndex = connection[1]
+                    reconnectEndpoint = 0
+                }
+                let oldIndex = connection[reconnectEndpoint]
+
+                if(this.connectionCountTo(oldIndex) > 2) { // otherwise don't reconnect
+                    let connections = this.neighborsOf(oldIndex).filter(index => index != objIndex)
+                    let newIndex = connections[Math.floor(Math.random() * connections.length)]
+                    connection[reconnectEndpoint] = newIndex
+                }
+            }
+        })*/
         this.connections.filter(connection => {
             let a = this.cityObjects[connection[0]]
             let b = this.cityObjects[connection[1]]

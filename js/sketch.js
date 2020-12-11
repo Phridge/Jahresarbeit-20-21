@@ -148,7 +148,7 @@ const sketch = () => {
     canvas.addEventListener("mousedown", event => {
         let downPos = new Position(event.offsetX, event.offsetY)
         let targetCity = population.getFittest()
-        let targetObject = targetCity.getCityObjectNear(downPos)
+        let targetObject = targetCity.getCityObjectNear(downPos, drawConfig)
         if(targetObject) {
             // we're dragging something now
             startDragging(
