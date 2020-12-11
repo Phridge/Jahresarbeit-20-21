@@ -29,7 +29,7 @@ class Consumer extends CityObject {
     }
 
     housePos() {
-        return this.pos.add(new Position(0, -20))
+        return new Position(this.pos.x, this.pos.y - 20)
     }
 
     containsPosition(position, drawConfig) {

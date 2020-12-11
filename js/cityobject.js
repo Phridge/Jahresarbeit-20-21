@@ -8,7 +8,6 @@ class CityObject {
         // overridden in subclasses
     }
 
-
     clone() {
         return new CityObject(this.pos)
     }
