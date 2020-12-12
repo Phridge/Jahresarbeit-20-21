@@ -38,7 +38,7 @@ class Population {
 
     nextPopulation() {
         this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config))
-        console.log(this.cities[0].getFitness(), this.cities[this.cities.length-1].getFitness());
+        // console.log(this.cities[0].getFitness(), this.cities[this.cities.length-1].getFitness());
         let size = this.config.size
         let newCities = new Array(size); // newCities[0] = this.cities[0];
 

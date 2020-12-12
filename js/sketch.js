@@ -27,7 +27,7 @@ const sketch = () => {
     let simulationState = {
         simulate: true,
         generationCount: 0,
-        eps: 5,
+        eps: 10,
         isDragging: null,
     }
 
@@ -36,7 +36,7 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 5,
+        nodePenalty: 20,
         connectionMutateChance: 0.02,
         selectionBias: 1,
     }
@@ -255,11 +255,26 @@ const sketch = () => {
         }
     });
 
+    function updateSelectionBiasColor(slider) {
+        let min = slider.min
+        let max = slider.max
+        let val = slider.value
+        if(val < 0) {
+            slider.style.background = "hsl(12, " + (Math.abs(val) / Math.abs(min)) * 100 + "%, 70%)"
+        } else if(val == 0) {
+            slider.style.background = "hsl(0, 0%, 70%)"
+        } else {
+            slider.style.background = "hsl(120, " + (Math.abs(val) / Math.abs(max)) * 100 + "%, 70%)"
+        }
+    }
+
     document.getElementById('action-set-selection-bias').value = populationConfig.selectionBias;
     document.getElementById('action-set-selection-bias').addEventListener("input", event => {
         populationConfig.selectionBias = event.target.value;
         population.updateConfig(populationConfig)
+        updateSelectionBiasColor(event.target)
     });
+    updateSelectionBiasColor(document.getElementById('action-set-selection-bias'))
 
     requestAnimationFrame(draw)
     startSimulation()
