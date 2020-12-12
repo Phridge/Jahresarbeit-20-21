@@ -38,6 +38,7 @@ const sketch = () => {
         reconnectChance: 0.05,
         nodePenalty: 5,
         connectionMutateChance: 0.02,
+        selectionBias: 1,
     }
 
     let drawConfig = {
@@ -252,6 +253,12 @@ const sketch = () => {
             populationConfig.connectionMutateChance = event.target.value;
             population.updateConfig(populationConfig);
         }
+    });
+
+    document.getElementById('action-set-selection-bias').value = populationConfig.selectionBias;
+    document.getElementById('action-set-selection-bias').addEventListener("input", event => {
+        populationConfig.selectionBias = event.target.value;
+        population.updateConfig(populationConfig)
     });
 
     requestAnimationFrame(draw)
