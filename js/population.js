@@ -38,29 +38,25 @@ class Population {
 
     nextPopulation() {
         this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config))
-        let newCities = new Array(this.config.size)
+        // console.log(this.cities[0].getFitness(), this.cities[this.cities.length-1].getFitness());
+        let size = this.config.size
+        let newCities = new Array(size); // newCities[0] = this.cities[0];
 
-        for(var lo = 0, hi = this.config.size -1; hi > lo; hi--, lo++) {
-            let parent = this.cities[lo]
-            let child = parent.clone()
+        for(var i = 0; i < size; i++) {
+            var x = Math.random()
+            x = Math.pow(x, Math.exp(this.config.selectionBias))
+            x = Math.floor(x * this.cities.length)
 
+            let child = this.cities[x].clone()
             child.mutate(this.config)
-
-            newCities[lo] = parent
-            newCities[hi] = child
-
-            if(lo >= this.cities.length -1) {
-                // points to the last city
-                lo--
-            }
+            newCities[i] = child
         }
 
-        // console.log(newCities.map(c => c.getFitness(this.config)));
         this.cities = newCities
     }
 
     repopulate(example) {
-        this.cities = (this.cities || new Array(this.config.size).fill(null)).map(_ => example.clone())
+        this.cities = (this.cities || new Array(this.config.size).fill(null)).fill(example)
     }
 
     updateConfig(config) {

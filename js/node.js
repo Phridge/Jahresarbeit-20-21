@@ -1,7 +1,7 @@
-class Node {
+class Node extends CityObject {
 
     constructor(pos) {
-        this.pos = pos
+        super(pos)
     }
 
     moveRandomly(maxDist) {
@@ -11,22 +11,23 @@ class Node {
         ))
     }
 
-    draw(ctx) {
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(this.pos.x - this.width/2, this.pos.y - this.height/2, this.width, this.height)
+    draw(ctx, drawConfig) {
+        let w = drawConfig.node.width
+        let h = drawConfig.node.height
+        ctx.fillStyle = drawConfig.node.color
+        ctx.fillRect(this.pos.x - w / 2, this.pos.y - h / 2, w, h)
     }
 
-    containsPosition(position) {
-        let upperLeft = new Position(this.pos.x - this.width / 2, this.pos.y - this.height / 2)
-        let lowerRight = new Position(this.pos.x + this.width / 2, this.pos.y + this.height / 2)
-        return position.x >= upperLeft.x && position.x <= lowerRight.x
-            && position.y >= upperLeft.y && position.y <= lowerRight.y
+    containsPosition(position, drawConfig) {
+        let w = drawConfig.node.width
+        let h = drawConfig.node.height
+        return position.isInsideRect(
+            new Position(this.pos.x - w / 2, this.pos.y - h / 2),
+            new Position(this.pos.x + w / 2, this.pos.y + h / 2)
+        )
     }
 
     clone() {
         return new Node(this.pos)
     }
 }
-
-Node.prototype.width = 7
-Node.prototype.height = 7

@@ -27,7 +27,7 @@ const sketch = () => {
     let simulationState = {
         simulate: true,
         generationCount: 0,
-        eps: 20,
+        eps: 10,
         isDragging: null,
     }
 
@@ -36,8 +36,31 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 5,
+        nodePenalty: 20,
         connectionMutateChance: 0.02,
+        selectionBias: 1,
+    }
+
+    let drawConfig = {
+        node: {
+            width: 7,
+            height: 7,
+            color: '#000000',
+        },
+        consumer: {
+            width: 20,
+            height: 20,
+            color: '#dfac20',
+        },
+        transformator: {
+            width: 20,
+            height: 30,
+            color: "#222222"
+        },
+        connection: {
+            width: 2,
+            color: "#000000"
+        },
     }
 
     let population = new Population(populationConfig, initialCity);
@@ -47,7 +70,7 @@ const sketch = () => {
     function draw() {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        population.getFittest().draw(ctx);
+        population.getFittest().draw(ctx, drawConfig);
         document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
         document.getElementById('result-generations').innerHTML = "Generation: " + simulationState.generationCount;
         document.getElementById('result-consumers').innerHTML = "Häuser: " + population.getFittest().cityObjects.filter(obj => obj instanceof Consumer).length;
@@ -126,7 +149,7 @@ const sketch = () => {
     canvas.addEventListener("mousedown", event => {
         let downPos = new Position(event.offsetX, event.offsetY)
         let targetCity = population.getFittest()
-        let targetObject = targetCity.getCityObjectNear(downPos)
+        let targetObject = targetCity.getCityObjectNear(downPos, drawConfig)
         if(targetObject) {
             // we're dragging something now
             startDragging(
@@ -231,6 +254,27 @@ const sketch = () => {
             population.updateConfig(populationConfig);
         }
     });
+
+    function updateSelectionBiasColor(slider) {
+        let min = slider.min
+        let max = slider.max
+        let val = slider.value
+        if(val < 0) {
+            slider.style.background = "hsl(12, " + (Math.abs(val) / Math.abs(min)) * 100 + "%, 70%)"
+        } else if(val == 0) {
+            slider.style.background = "hsl(0, 0%, 70%)"
+        } else {
+            slider.style.background = "hsl(120, " + (Math.abs(val) / Math.abs(max)) * 100 + "%, 70%)"
+        }
+    }
+
+    document.getElementById('action-set-selection-bias').value = populationConfig.selectionBias;
+    document.getElementById('action-set-selection-bias').addEventListener("input", event => {
+        populationConfig.selectionBias = event.target.value;
+        population.updateConfig(populationConfig)
+        updateSelectionBiasColor(event.target)
+    });
+    updateSelectionBiasColor(document.getElementById('action-set-selection-bias'))
 
     requestAnimationFrame(draw)
     startSimulation()

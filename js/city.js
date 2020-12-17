@@ -77,6 +77,24 @@ class City {
         return this.connections.filter(c => c[0] == index || c[1] == index)
     }
 
+    neighborsOf(index) {
+        return this.connectionsTo(index).map(con => con[0] == index ? con[1] : con[0])
+    }
+
+    /**
+     * Counts the connections to some index
+     * @param {*} index the index of the city object
+     */
+    connectionCountTo(index) {
+        var count = 0
+        this.connections.forEach(con => {
+            if(con[0] == index || con[1] == index) {
+                count++
+            }
+        })
+        return count
+    }
+
     /**
      * Remove a City object and all its connections.
      * @param {*} index index of removed city object
@@ -97,14 +115,15 @@ class City {
      * Returns the city object that contains the specified coordinates.
      * @param {*} position the point on the screen
      */
-    getCityObjectNear(position) {
-        return this.cityObjects.find(obj => obj.containsPosition(position))
+    getCityObjectNear(position, drawConfig) {
+        return this.cityObjects.find(obj => obj.containsPosition(position, drawConfig))
     }
 
-    draw(ctx) {
+    draw(ctx, drawConfig) {
+        ctx.lineWidth = drawConfig.connection.width
         this.connections.forEach(connection => {
             ctx.beginPath();
-            ctx.strokeStyle = '#000000';
+            ctx.strokeStyle = drawConfig.connection.color;
             let a = this.cityObjects[connection[0]];
             let b = this.cityObjects[connection[1]];
             ctx.moveTo(a.pos.x, a.pos.y);
@@ -112,7 +131,7 @@ class City {
             ctx.stroke();
         });
         this.cityObjects.forEach(cityObject => {
-            cityObject.draw(ctx);
+            cityObject.draw(ctx, drawConfig);
         });
     }
 
@@ -197,6 +216,26 @@ class City {
             }
         });
         // reconnect
+        // reconnect a connection to one of its neighbors
+        /*this.connections.forEach(connection => {
+            if(Math.random() < config.reconnectChance) {
+                var objIndex, reconnectEndpoint;
+                if(Math.random() < 0.5) {
+                    objIndex = connection[0]
+                    reconnectEndpoint = 1
+                } else {
+                    objIndex = connection[1]
+                    reconnectEndpoint = 0
+                }
+                let oldIndex = connection[reconnectEndpoint]
+
+                if(this.connectionCountTo(oldIndex) > 2) { // otherwise don't reconnect
+                    let connections = this.neighborsOf(oldIndex).filter(index => index != objIndex)
+                    let newIndex = connections[Math.floor(Math.random() * connections.length)]
+                    connection[reconnectEndpoint] = newIndex
+                }
+            }
+        })*/
         this.connections.filter(connection => {
             let a = this.cityObjects[connection[0]]
             let b = this.cityObjects[connection[1]]
