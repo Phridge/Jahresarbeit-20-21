@@ -4,26 +4,17 @@ const sketch = () => {
     const width = 500;
     const canvas = document.getElementById('canvas');
 
-    let initialCity = new City([
-        new Consumer(new Position(100, 150)), 
-        new Consumer(new Position(20, 20)), 
-        new Consumer(new Position(200, 20)), 
-        new Node    (new Position(10, 100)),
-        new Node    (new Position(400, 50)),
-        new Consumer(new Position(200, 100)), 
-        new Consumer(new Position(200, 200)), 
-        new Consumer(new Position(300, 250)), 
-        new Consumer(new Position(400, 100)),
-        new Transformer(new Position(250, 150))
-    ]);
-    initialCity.connect(0, 3)
-    initialCity.connect(1, 3)
-    initialCity.connect(2, 3)
-    initialCity.connect(3, 4)
-    initialCity.connect(4, 5)
-    initialCity.connect(4, 6)
-    initialCity.connect(4, 7)
-    initialCity.connect(4, 8)
+    let initialCity = new City()
+    initialCity.addCityObject(new Transformer   (new Position(250, 150  )), null)
+    initialCity.addCityObject(new Consumer      (new Position(100, 150  )), 4) 
+    initialCity.addCityObject(new Consumer      (new Position(20, 20    )), 4) 
+    initialCity.addCityObject(new Consumer      (new Position(200, 20   )), 4) 
+    initialCity.addCityObject(new Node          (new Position(10, 100   )), 5)
+    initialCity.addCityObject(new Node          (new Position(400, 50   )), 0)
+    initialCity.addCityObject(new Consumer      (new Position(200, 100  )), 5) 
+    initialCity.addCityObject(new Consumer      (new Position(200, 200  )), 5) 
+    initialCity.addCityObject(new Consumer      (new Position(300, 250  )), 5) 
+    initialCity.addCityObject(new Consumer      (new Position(400, 100  )), 5)
 
     let simulationState = {
         simulate: true,
@@ -141,7 +132,7 @@ const sketch = () => {
             let clickPos = new Position(event.offsetX, event.offsetY);
             let obj = new Consumer(clickPos);
             let best = population.getFittest();
-            best.addConnectedCityObject(obj);
+            best.addCityObject(obj, 0)
             population.repopulate(best);
             draw()
         }

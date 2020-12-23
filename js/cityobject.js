@@ -8,8 +8,8 @@ class CityObject {
         // overridden in subclasses
     }
 
-    clone() {
-        return new CityObject(this.pos)
+    clone() { // general clone function, produces shallow clones
+        return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
     }
 
     containsPosition(_pos, _drawConfig) {
