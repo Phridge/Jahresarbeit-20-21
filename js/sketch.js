@@ -29,7 +29,7 @@ const sketch = () => {
         maxMoveDelta: 5,
         reconnectChance: 0.05,
         nodePenalty: 20,
-        connectionMutateChance: 0.02,
+        nodeMutationChance: 0.02,
         selectionBias: 1,
     }
 
@@ -211,8 +211,8 @@ const sketch = () => {
         }
     });
 
-    document.getElementById('action-set-connections-mutation-rate').value = populationConfig.reconnectChance;
-    document.getElementById('action-set-connections-mutation-rate').addEventListener('input', event => {
+    document.getElementById('action-set-reconnect-chance').value = populationConfig.reconnectChance;
+    document.getElementById('action-set-reconnect-chance').addEventListener('input', event => {
         if(event.target.value <= 1 && event.target.value >= 0) {
             populationConfig.reconnectChance = event.target.value;
             population.updateConfig(populationConfig);
@@ -239,10 +239,10 @@ const sketch = () => {
         }
     });
 
-    document.getElementById('action-set-node-mutation-rate').value = populationConfig.connectionMutateChance;
+    document.getElementById('action-set-node-mutation-rate').value = populationConfig.nodeMutationChance;
     document.getElementById('action-set-node-mutation-rate').addEventListener('input', event => {
         if (event.target.value >= 0) {
-            populationConfig.connectionMutateChance = event.target.value;
+            populationConfig.nodeMutationChance = event.target.value;
             population.updateConfig(populationConfig);
         }
     });

@@ -66,13 +66,28 @@ class City {
         return result
     }
 
+    indirectConnectionBetween(from, to) {
+        if(from === to) {
+            return true
+        }
+
+        do {
+            from = this.connections[from]
+            if(from == to) {
+                return true
+            }
+        } while(from !== null)
+        return false
+    }
+
     /**
      * Remove a City object and its connection.
      * Connections that pointed towards this object now point to its connection target.
      * @param {*} index index of removed city object
      */
     removeCityObject(index) {
-        let reconnectTarget = this.connections[index]
+        let reconnectTarget = this.connections[index] >= index ? this.connections[index] - 1 : this.connections[index]
+
         this.cityObjects.splice(index, 1)
         this.connections.splice(index, 1)
         
@@ -81,7 +96,7 @@ class City {
             if(this.connections[i] === index) {
                 this.connections[i] = reconnectTarget
             } else if (this.connections[i] > index) {
-                this.connections[i]--
+                this.connections[i] -= 1
             }
         }
 
@@ -165,11 +180,51 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
+        // create nodes
+        for (var from = 0, stop = this.connections.length; from < stop; from++) {
+            let to = this.connections[from]
+            if (to !== null && Math.random() < config.nodeMutationChance) {
+                let a = this.cityObjects[from]
+                let b = this.cityObjects[to]
+                let spawnDist = a.pos.dist(b.pos)
+                let randomOffset = new Position(
+                    Math.random() * spawnDist,
+                    Math.random() * spawnDist,
+                )
+                let newNodeIndex = this.addCityObject(new Node(b.pos.add(randomOffset)), to)
+                this.connections[from] = newNodeIndex
+            }
+        }
+
+        // move
         this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < config.moveChance) {
                 cityObject.moveRandomly(config.maxMoveDelta)
             }
         })
+
+        // reconnect
+        for(var from = 0, stop = this.connections.length; from < stop; from++) {
+            if (this.connections[from] !== null && Math.random() < config.reconnectChance) {
+                let whitelist = []
+                for(var i = 0; i < this.cityObjects.length; i++) {
+                    if(!this.indirectConnectionBetween(i, from)) {
+                        whitelist.push(i)
+                    }
+                }
+
+                let reconnectTo = whitelist[Math.floor(Math.random() * whitelist.length)]
+                this.connections[from] = reconnectTo
+            }
+        }
+
+        // delete nodes
+        for(var i = 0; i < this.connections.length; i++) {
+            if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
+                this.removeCityObject(i)
+                i--
+            }
+        }
 
         delete this.fitness
     }
