@@ -14,6 +14,7 @@ const sketch = () => {
         new Consumer(new Position(200, 200)), 
         new Consumer(new Position(300, 250)), 
         new Consumer(new Position(400, 100)),
+        new Transformer(new Position(250, 150))
     ]);
     initialCity.connect(0, 3)
     initialCity.connect(1, 3)
@@ -52,7 +53,7 @@ const sketch = () => {
             height: 20,
             color: '#dfac20',
         },
-        transformator: {
+        transformer: {
             width: 20,
             height: 30,
             color: "#222222"
@@ -77,7 +78,7 @@ const sketch = () => {
         document.getElementById('result-nodes').innerHTML = "Knoten: " + population.getFittest().cityObjects.filter(obj => obj instanceof Node).length;
         document.getElementById('result-connections').innerHTML = "Verbindungen: " + population.getFittest().connections.length;
 
-        //print(population.getFittest().getFitness(populationConfig));
+        // console.log(population.getFittest())
         
         if(simulationState.isSimulating) {
             let timestamp = new Date().getTime()
