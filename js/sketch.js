@@ -28,7 +28,7 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 20,
+        nodePenalty: 10,
         nodeMutationChance: 0.02,
         selectionBias: 1,
     }
@@ -183,8 +183,9 @@ const sketch = () => {
 
     document.getElementById('action-set-populations-size').value = populationConfig.size;
     document.getElementById('action-set-populations-size').addEventListener('input', event => {
-        if(event.target.value > 1) {
-            populationConfig.size = event.target.value;
+        let value = Number(event.target.value)
+        if(value > 1) {
+            populationConfig.size = value;
             population.updateConfig(populationConfig);
         } else {
             event.target.value = 2;
@@ -193,38 +194,42 @@ const sketch = () => {
 
     document.getElementById('action-set-position-mutation-rate').value = populationConfig.moveChance;
     document.getElementById('action-set-position-mutation-rate').addEventListener('input', event => {
-        if(event.target.value <= 1 && event.target.value >= 0) {
-            populationConfig.moveChance = event.target.value;
+        let value =Number(event.target.value)
+        if(value <= 1 && value >= 0) {
+            populationConfig.moveChance = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = (event.target.value > 1) ? 1 : 0;
+            event.target.value = (value > 1) ? 1 : 0;
         }
     });
 
     document.getElementById('action-set-position-mutation-max').value = populationConfig.maxMoveDelta;
     document.getElementById('action-set-position-mutation-max').addEventListener('input', event => {
-        if(event.target.value >= 1) {
-            populationConfig.maxMoveDelta = event.target.value;
+        let value = Number(event.target.value)
+        if(value >= 1) {
+            populationConfig.maxMoveDelta = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = 1;
+            value = 1;
         }
     });
 
     document.getElementById('action-set-reconnect-chance').value = populationConfig.reconnectChance;
     document.getElementById('action-set-reconnect-chance').addEventListener('input', event => {
-        if(event.target.value <= 1 && event.target.value >= 0) {
-            populationConfig.reconnectChance = event.target.value;
+        let value = Number(event.target.value)
+        if(value <= 1 && value >= 0) {
+            populationConfig.reconnectChance = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = (event.target.value > 1) ? 1 : 0;
+            event.target.value = (value > 1) ? 1 : 0;
         }
     });
     
     document.getElementById('action-set-generations-per-second').value = simulationState.eps;
     document.getElementById('action-set-generations-per-second').addEventListener('input', event => {
-        if (event.target.value >= 1) {
-            simulationState.eps = event.target.value;
+        let value = Number(event.target.value)
+        if (value >= 1) {
+            simulationState.eps = value;
             population.updateConfig(populationConfig);
         } else {
             event.target.value = 1;
@@ -233,24 +238,26 @@ const sketch = () => {
 
     document.getElementById('action-set-node-penalty').value = populationConfig.nodePenalty;
     document.getElementById('action-set-node-penalty').addEventListener('input', event => {
-        if (event.target.value >= 0) {
-            populationConfig.nodePenalty = event.target.value;
+        let value = Number(event.target.value)
+        if (value >= 0) {
+            populationConfig.nodePenalty = value;
             population.updateConfig(populationConfig);
         }
     });
 
     document.getElementById('action-set-node-mutation-rate').value = populationConfig.nodeMutationChance;
     document.getElementById('action-set-node-mutation-rate').addEventListener('input', event => {
-        if (event.target.value >= 0) {
-            populationConfig.nodeMutationChance = event.target.value;
-            population.updateConfig(populationConfig);
+        let value = Number(event.target.value)
+        if (value >= 0) {
+            populationConfig.nodeMutationChance = value
+            population.updateConfig(populationConfig)
         }
     });
 
     function updateSelectionBiasColor(slider) {
-        let min = slider.min
-        let max = slider.max
-        let val = slider.value
+        let min = Number(slider.min)
+        let max = Number(slider.max)
+        let val = Number(slider.value)
         if(val < 0) {
             slider.style.background = "hsl(12, " + (Math.abs(val) / Math.abs(min)) * 100 + "%, 70%)"
         } else if(val == 0) {
@@ -262,7 +269,7 @@ const sketch = () => {
 
     document.getElementById('action-set-selection-bias').value = populationConfig.selectionBias;
     document.getElementById('action-set-selection-bias').addEventListener("input", event => {
-        populationConfig.selectionBias = event.target.value;
+        populationConfig.selectionBias = Number(event.target.value);
         population.updateConfig(populationConfig)
         updateSelectionBiasColor(event.target)
     });
@@ -272,4 +279,4 @@ const sketch = () => {
     startSimulation()
 };
 
-document.addEventListener("DOMContentLoaded", sketch);
+document.addEventListener("DOMContentLoaded", sketch)

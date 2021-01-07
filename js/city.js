@@ -148,6 +148,10 @@ class City {
                 to = this.cityObjects[to]
 
                 length += from.pos.dist(to.pos)
+
+                if(typeof length != "number") {
+                    throw Error()
+                }
                 
                 if(from instanceof Node) {
                     length += config.nodePenalty
@@ -180,18 +184,23 @@ class City {
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
+
+        // delete nodes
+        for (var i = 0; i < this.connections.length; i++) {
+            if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
+                this.removeCityObject(i)
+                i--
+            }
+        }
+        
         // create nodes
         for (var from = 0, stop = this.connections.length; from < stop; from++) {
             let to = this.connections[from]
             if (to !== null && Math.random() < config.nodeMutationChance) {
                 let a = this.cityObjects[from]
                 let b = this.cityObjects[to]
-                let spawnDist = a.pos.dist(b.pos)
-                let randomOffset = new Position(
-                    Math.random() * spawnDist,
-                    Math.random() * spawnDist,
-                )
-                let newNodeIndex = this.addCityObject(new Node(b.pos.add(randomOffset)), to)
+                let dest = a.pos.add(b.pos).mul(1/2)
+                let newNodeIndex = this.addCityObject(new Node(dest), to)
                 this.connections[from] = newNodeIndex
             }
         }
@@ -215,14 +224,6 @@ class City {
 
                 let reconnectTo = whitelist[Math.floor(Math.random() * whitelist.length)]
                 this.connections[from] = reconnectTo
-            }
-        }
-
-        // delete nodes
-        for(var i = 0; i < this.connections.length; i++) {
-            if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
-                this.removeCityObject(i)
-                i--
             }
         }
 
