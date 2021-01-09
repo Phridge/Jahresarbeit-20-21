@@ -1,27 +1,32 @@
 class City {
     constructor() {
         this.cityObjects = []
-        this.connections = []
     }
 
-    /**
-     * Add a city object with its corresponding connection
-     * @param {*} cityObject the object to be added
-     * @param {*} connection its connection; can be null
-     */
-    addCityObject(cityObject, connection) {
-        const index = this.cityObjects.length
-        this.cityObjects.push(cityObject)
-        this.connections.push(connection)
+    addTransformer(pos, connection = 0) {
+        return this.addCityObject(new Transformer(pos, connection))
+    }
+
+    addConsumer(pos, connection = 0) {
+        return this.addCityObject(new Consumer(pos, connection))
+    }
+    
+    addNode(pos, connection = 0) {
+        return this.addCityObject(new Node(pos, connection))
+    }
+
+    addCityObject(obj) {
+        let index = this.cityObjects.length
+        this.cityObjects.push(obj)
         delete this.fitness
         return index
     }
 
-    /**
-     * Get the index of an city object. -1 if not found.
-     * @param {*} obj the city object
-     */
-    getIndex(obj) {
+    cityObjectAt(index) {
+        return this.cityObjects[index].clone()
+    }
+
+    indexOf(obj) {
         return this.cityObjects.indexOf(obj)
     }
 
@@ -31,7 +36,7 @@ class City {
      * @param {*} connection its new connection
      */
     setConnection(objIndex, connection) {
-        this.connections[objIndex] = connection
+        this.cityObjects[objIndex].connection = connection
         delete this.fitness
     }
 
@@ -42,42 +47,33 @@ class City {
      */
     cityObjectsConnectedTo(objIndex) {
         let result = new Set()
-        this.connections.forEach((to, from) => {
-            if(to == objIndex) {
-                result.add(from)
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            if(this.cityObjects[i].connection == objIndex) {
+                result.add(i)
             }
-        })
+        }
         return result
     }
 
-    /**
-     * Get the indices of city objects that are directly or indirectly connected to some object.
-     * @param {*} objIndex the index of the object that gets checked
-     * @returns a Set of indices that somewhat are connected to objIndex
-     */
-    cityObjectsIndirectlyConnectedTo(objIndex) {
-        let result = new Set([objIndex]) // add the target so searching is easier
-        this.connections.forEach((to, from) => {
-            if(result.has(to)) {
-                result.add(from)
+    cityObjectsUnrelatedTo(objIndex) {
+        let result = new Set()
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            if(!this.indirectConnectionBetween(i, objIndex)) {
+                result.add(i)
             }
-        })
-        result.delete(objIndex) // the target doesn't count
+        }
         return result
     }
 
     indirectConnectionBetween(from, to) {
-        if(from === to) {
-            return true
-        }
-
-        do {
-            from = this.connections[from]
-            if(from == to) {
-                return true
+        while(from !== to) {
+            if(from === null) {
+                return false
+            } else {
+                from = this.cityObjects[from].connection
             }
-        } while(from !== null)
-        return false
+        }
+        return true
     }
 
     /**
@@ -86,17 +82,18 @@ class City {
      * @param {*} index index of removed city object
      */
     removeCityObject(index) {
-        let reconnectTarget = this.connections[index] >= index ? this.connections[index] - 1 : this.connections[index]
+        let target = this.cityObjects[index]
+        let reconnectTarget = target.connection - (target.connection >= index ? 1 : 0)
 
         this.cityObjects.splice(index, 1)
-        this.connections.splice(index, 1)
         
         // revalidate all the connections that point TO or ABOVE the city object
-        for(var i = 0, stop = this.connections.length; i < stop; i++) {
-            if(this.connections[i] === index) {
-                this.connections[i] = reconnectTarget
-            } else if (this.connections[i] > index) {
-                this.connections[i] -= 1
+        for(var i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let obj = this.cityObjects[i]
+            if(obj.connection === index) {
+                obj.connection = reconnectTarget
+            } else if (obj.connection > index) {
+                obj.connection -= 1
             }
         }
 
@@ -119,18 +116,20 @@ class City {
      */
     draw(ctx, drawConfig) {
         ctx.lineWidth = drawConfig.connection.width
-        this.connections.forEach((to, from) => { if(to !== null) {
-            ctx.beginPath();
-            ctx.strokeStyle = drawConfig.connection.color;
-            let a = this.cityObjects[from];
-            let b = this.cityObjects[to];
-            ctx.moveTo(a.pos.x, a.pos.y);
-            ctx.lineTo(b.pos.x, b.pos.y);
-            ctx.stroke();
-        }});
-        this.cityObjects.forEach(cityObject => {
-            cityObject.draw(ctx, drawConfig);
-        });
+        ctx.strokeStyle = drawConfig.connection.color
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            ctx.beginPath()
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if(!to) continue
+
+            ctx.moveTo(from.pos.x, from.pos.y)
+            ctx.lineTo(to.pos.x, to.pos.y)
+            ctx.stroke()
+        }
+        for (let i = 0; i < this.cityObjects.length; i++) {
+            this.cityObjects[i].draw(ctx, drawConfig)
+        }
     }
 
     /**
@@ -143,20 +142,22 @@ class City {
     getFitness(config) {
         if(!this.fitness) {
             var length = 0
-            this.connections.forEach((to, from) => { if(to !== null) {
-                from = this.cityObjects[from]
-                to = this.cityObjects[to]
+            for(let i = 0; i < this.cityObjects.length; i++) {
+                let from = this.cityObjects[i]
+                let to = this.cityObjects[from.connection]
+                if(!to) continue
 
                 length += from.pos.dist(to.pos)
 
-                if(typeof length != "number") {
+                if (typeof length != "number") {
                     throw Error()
                 }
-                
-                if(from instanceof Node) {
+
+                if (from instanceof Node) {
                     length += config.nodePenalty
                 }
-            }})
+            }
+            
             // this calculation ensures that the shortest length sum
             // gets the most points
             this.fitness = 100 / (length / 100 + 1)
@@ -168,13 +169,15 @@ class City {
      * Calculate the total length of only the connections of this city
      */
     getLength() {
-        return this.connections.reduce((acc, to, from) => { if(to !== null) {
-            from = this.cityObjects[from];
-            to = this.cityObjects[to];
-            return acc + from.pos.dist(to.pos);
-        } else {
-            return acc
-        }}, 0)
+        let acc = 0
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if(!to) continue
+
+            acc += from.pos.dist(to.pos)
+        }
+        return acc
     }
 
     /**
@@ -186,7 +189,7 @@ class City {
     mutate(config) {
 
         // delete nodes
-        for (var i = 0; i < this.connections.length; i++) {
+        for (var i = 0; i < this.cityObjects.length; i++) {
             if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
                 this.removeCityObject(i)
                 i--
@@ -194,14 +197,13 @@ class City {
         }
         
         // create nodes
-        for (var from = 0, stop = this.connections.length; from < stop; from++) {
-            let to = this.connections[from]
-            if (to !== null && Math.random() < config.nodeMutationChance) {
-                let a = this.cityObjects[from]
-                let b = this.cityObjects[to]
-                let dest = a.pos.add(b.pos).mul(1/2)
-                let newNodeIndex = this.addCityObject(new Node(dest), to)
-                this.connections[from] = newNodeIndex
+        for (var i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if (to && Math.random() < config.nodeMutationChance) {
+                let dest = from.pos.add(to.pos).mul(1/2)
+                let newNodeIndex = this.addNode(dest, from.connection)
+                this.setConnection(i, newNodeIndex)
             }
         }
 
@@ -213,17 +215,13 @@ class City {
         })
 
         // reconnect
-        for(var from = 0, stop = this.connections.length; from < stop; from++) {
-            if (this.connections[from] !== null && Math.random() < config.reconnectChance) {
-                let whitelist = []
-                for(var i = 0; i < this.cityObjects.length; i++) {
-                    if(!this.indirectConnectionBetween(i, from)) {
-                        whitelist.push(i)
-                    }
-                }
-
-                let reconnectTo = whitelist[Math.floor(Math.random() * whitelist.length)]
-                this.connections[from] = reconnectTo
+        for(let i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if (to && Math.random() < config.reconnectChance) {
+                let unrelatedSet = Array.from(this.cityObjectsUnrelatedTo(i).keys())
+                let reconnectTo = unrelatedSet[Math.floor(Math.random() * unrelatedSet.length)]
+                from.connection = reconnectTo
             }
         }
 
@@ -236,7 +234,6 @@ class City {
     clone() {
         let c = Object.create(City.prototype)
         c.cityObjects = Array.from(this.cityObjects, o => o.clone())
-        c.connections = Array.from(this.connections)
         return c
     }
 }

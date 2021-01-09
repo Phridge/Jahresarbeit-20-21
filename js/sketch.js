@@ -5,16 +5,16 @@ const sketch = () => {
     const canvas = document.getElementById('canvas');
 
     let initialCity = new City()
-    initialCity.addCityObject(new Transformer   (new Position(250, 150  )), null)
-    initialCity.addCityObject(new Consumer      (new Position(100, 150  )), 4) 
-    initialCity.addCityObject(new Consumer      (new Position(20, 20    )), 4) 
-    initialCity.addCityObject(new Consumer      (new Position(200, 20   )), 4) 
-    initialCity.addCityObject(new Node          (new Position(10, 100   )), 5)
-    initialCity.addCityObject(new Node          (new Position(400, 50   )), 0)
-    initialCity.addCityObject(new Consumer      (new Position(200, 100  )), 5) 
-    initialCity.addCityObject(new Consumer      (new Position(200, 200  )), 5) 
-    initialCity.addCityObject(new Consumer      (new Position(300, 250  )), 5) 
-    initialCity.addCityObject(new Consumer      (new Position(400, 100  )), 5)
+    initialCity.addTransformer(new Position(250, 150), null)
+    initialCity.addNode(new Position(10, 100), 0)
+    initialCity.addNode(new Position(400, 50), 1)
+    initialCity.addConsumer(new Position(100, 150), 1) 
+    initialCity.addConsumer(new Position(20, 20), 1) 
+    initialCity.addConsumer(new Position(200, 20), 1) 
+    initialCity.addConsumer(new Position(200, 100), 2) 
+    initialCity.addConsumer(new Position(200, 200), 2) 
+    initialCity.addConsumer(new Position(300, 250), 2) 
+    initialCity.addConsumer(new Position(400, 100), 2)
 
     let simulationState = {
         simulate: true,
@@ -28,7 +28,7 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 10,
+        nodePenalty: 5,
         nodeMutationChance: 0.02,
         selectionBias: 1,
     }
@@ -62,12 +62,15 @@ const sketch = () => {
     function draw() {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        population.getFittest().draw(ctx, drawConfig);
-        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
+
+        let fittest = population.getFittest()
+        fittest.draw(ctx, drawConfig)
+
+        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(fittest.getLength()) + 'm';
         document.getElementById('result-generations').innerHTML = "Generation: " + simulationState.generationCount;
-        document.getElementById('result-consumers').innerHTML = "Häuser: " + population.getFittest().cityObjects.filter(obj => obj instanceof Consumer).length;
-        document.getElementById('result-nodes').innerHTML = "Knoten: " + population.getFittest().cityObjects.filter(obj => obj instanceof Node).length;
-        document.getElementById('result-connections').innerHTML = "Verbindungen: " + population.getFittest().connections.length;
+        document.getElementById('result-consumers').innerHTML = "Häuser: " + fittest.cityObjects.filter(obj => obj instanceof Consumer).length;
+        document.getElementById('result-nodes').innerHTML = "Knoten: " + fittest.cityObjects.filter(obj => obj instanceof Node).length;
+        document.getElementById("result-connections").innerHTML = "Verbindungen: " + (fittest.cityObjects.length - 1)
 
         // console.log(population.getFittest())
         
@@ -130,9 +133,8 @@ const sketch = () => {
         } else {
             // clicked
             let clickPos = new Position(event.offsetX, event.offsetY);
-            let obj = new Consumer(clickPos);
             let best = population.getFittest();
-            best.addCityObject(obj, 0)
+            best.addConsumer(clickPos, 0)
             population.repopulate(best);
             draw()
         }
