@@ -1,254 +1,230 @@
 class City {
-    constructor(cityObjects) {
-        this.cityObjects = cityObjects;
-        this.connections = [];
+    constructor() {
+        this.cityObjects = []
     }
 
-    addCityObject(cityObject) {
-        const index = this.cityObjects.length
-        this.cityObjects.push(cityObject)
+    addTransformer(pos, connection = 0) {
+        return this.addCityObject(new Transformer(pos, connection))
+    }
+
+    addConsumer(pos, connection = 0) {
+        return this.addCityObject(new Consumer(pos, connection))
+    }
+    
+    addNode(pos, connection = 0) {
+        return this.addCityObject(new Node(pos, connection))
+    }
+
+    addCityObject(obj) {
+        let index = this.cityObjects.length
+        this.cityObjects.push(obj)
         delete this.fitness
         return index
     }
 
-    /**
-     * Adds a city object.
-     * If it is a Node, it seeks the nearest two city objects and places itself in
-     * between the objects. If it is a Consumer, it connects to the nearest
-     * node.
-     * @param {*} cityObject the city object to be added.
-     */
-    addConnectedCityObject(cityObject) {
-        // get the nearest node
-        const node = this.cityObjects.reduce((acc, obj) => {
-            if(obj instanceof Node) {
-                const dist = obj.pos.dist(cityObject.pos)
-                if(dist < acc.dist) {
-                    acc = {dist, obj}
-                }
-            }
-            return acc
-        }, {dist: +Infinity, obj: undefined}).obj
-
-        // add the city object
-        const cityObjectIndex = this.addCityObject(cityObject)
-        if(node) {
-            // if the node was found, add the connection
-            this.connect(this.getIndex(node), cityObjectIndex)
-        }
-        delete this.fitness
+    cityObjectAt(index) {
+        return this.cityObjects[index].clone()
     }
 
-    /**
-     * Get the index of an city object. -1 if not found.
-     * @param {*} obj the city object
-     */
-    getIndex(obj) {
+    indexOf(obj) {
         return this.cityObjects.indexOf(obj)
     }
 
     /**
-     * Adds a connection between two nodes.
-     * @param {*} a first node index
-     * @param {*} b second node index
+     * Set the connection for a city object. No validity checks.
+     * @param {*} objIndex the object that gets reconnected
+     * @param {*} connection its new connection
      */
-    connect(a, b) {
-        this.connections.push([a, b]);
+    setConnection(objIndex, connection) {
+        this.cityObjects[objIndex].connection = connection
         delete this.fitness
     }
 
     /**
-     * Clear any connection between two objects (indices).
-     * Does nothing if no connections exists.
-     * @param {*} a one part of the connection
-     * @param {*} b the other part of the connection
+     * Get the indices of city objects directly connected to some object.
+     * @param {*} objIndex city objet index to which others may be connected
+     * @returns a Set of indices
      */
-    disconnect(a, b) {
-        let c = this.connections.findIndex(c => c == [a, b] || c == [b, a])
-        this.connections.splice(c, 1)
-        delete this.fitness
-    }
-
-    /**
-     * Get the connections to a city object at specified index.
-     * @param {*} index index of the city object
-     */
-    connectionsTo(index) {
-        return this.connections.filter(c => c[0] == index || c[1] == index)
-    }
-
-    neighborsOf(index) {
-        return this.connectionsTo(index).map(con => con[0] == index ? con[1] : con[0])
-    }
-
-    /**
-     * Counts the connections to some index
-     * @param {*} index the index of the city object
-     */
-    connectionCountTo(index) {
-        var count = 0
-        this.connections.forEach(con => {
-            if(con[0] == index || con[1] == index) {
-                count++
+    cityObjectsConnectedTo(objIndex) {
+        let result = new Set()
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            if(this.cityObjects[i].connection == objIndex) {
+                result.add(i)
             }
-        })
-        return count
+        }
+        return result
+    }
+
+    cityObjectsUnrelatedTo(objIndex) {
+        let result = new Set()
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            if(!this.indirectConnectionBetween(i, objIndex)) {
+                result.add(i)
+            }
+        }
+        return result
+    }
+
+    indirectConnectionBetween(from, to) {
+        while(from !== to) {
+            if(from === null) {
+                return false
+            } else {
+                from = this.cityObjects[from].connection
+            }
+        }
+        return true
     }
 
     /**
-     * Remove a City object and all its connections.
+     * Remove a City object and its connection.
+     * Connections that pointed towards this object now point to its connection target.
      * @param {*} index index of removed city object
      */
     removeCityObject(index) {
-        this.connections = this.connections
-            .filter(con => con[0] != index && con[1] != index) // filter out the connections to the index
-            .map(con => { // redirect connections to the correct index
-                con[0] -= con[0] > index ? 1 : 0
-                con[1] -= con[1] > index ? 1 : 0
-                return con
-        })
+        let target = this.cityObjects[index]
+        let reconnectTarget = target.connection - (target.connection >= index ? 1 : 0)
+
         this.cityObjects.splice(index, 1)
+        
+        // revalidate all the connections that point TO or ABOVE the city object
+        for(var i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let obj = this.cityObjects[i]
+            if(obj.connection === index) {
+                obj.connection = reconnectTarget
+            } else if (obj.connection > index) {
+                obj.connection -= 1
+            }
+        }
+
         delete this.fitness
     }
 
     /**
      * Returns the city object that contains the specified coordinates.
      * @param {*} position the point on the screen
+     * @param {*} drawConfig config used for drawing that influences behaviour of city objects
      */
     getCityObjectNear(position, drawConfig) {
         return this.cityObjects.find(obj => obj.containsPosition(position, drawConfig))
     }
 
+    /**
+     * Draw the scene to a WebGL context
+     * @param {*} ctx the context
+     * @param {*} drawConfig config that some city objects require for functioning
+     */
     draw(ctx, drawConfig) {
         ctx.lineWidth = drawConfig.connection.width
-        this.connections.forEach(connection => {
-            ctx.beginPath();
-            ctx.strokeStyle = drawConfig.connection.color;
-            let a = this.cityObjects[connection[0]];
-            let b = this.cityObjects[connection[1]];
-            ctx.moveTo(a.pos.x, a.pos.y);
-            ctx.lineTo(b.pos.x, b.pos.y);
-            ctx.stroke();
-        });
-        this.cityObjects.forEach(cityObject => {
-            cityObject.draw(ctx, drawConfig);
-        });
+        ctx.strokeStyle = drawConfig.connection.color
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            ctx.beginPath()
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if(!to) continue
+
+            ctx.moveTo(from.pos.x, from.pos.y)
+            ctx.lineTo(to.pos.x, to.pos.y)
+            ctx.stroke()
+        }
+        for (let i = 0; i < this.cityObjects.length; i++) {
+            this.cityObjects[i].draw(ctx, drawConfig)
+        }
     }
 
     /**
-     * The fitness is calculated by adding the lengths of all connections
-     * and "flipping" the number so fitter cities have a higher score.
+     * The fitness is calculated by adding the lengths of all connections, adding
+     * some extra length for each Node
+     * and "flipping" the number so "shorter" cities have a higher score.
      * @param {*} config configuration data is required for correct calculation.
      * @return The fitness score. Higher means better.
      */
     getFitness(config) {
         if(!this.fitness) {
-            this.fitness = this.connections.reduce((acc, connection) => {
-                const a = this.cityObjects[connection[0]]
-                const b = this.cityObjects[connection[1]]
-                return acc + a.pos.dist(b.pos)
-            }, 0)
-            this.fitness += this.cityObjects.filter(o => o instanceof Node).length * config.nodePenalty
-            // this calculation ensures that the shortest distance sum
+            var length = 0
+            for(let i = 0; i < this.cityObjects.length; i++) {
+                let from = this.cityObjects[i]
+                let to = this.cityObjects[from.connection]
+                if(!to) continue
+
+                length += from.pos.dist(to.pos)
+
+                if (typeof length != "number") {
+                    throw Error()
+                }
+
+                if (from instanceof Node) {
+                    length += config.nodePenalty
+                }
+            }
+            
+            // this calculation ensures that the shortest length sum
             // gets the most points
-            this.fitness = 100 / (this.fitness / 100 + 1)
+            this.fitness = 100 / (length / 100 + 1)
         }
         return this.fitness
     }
 
+    /**
+     * Calculate the total length of only the connections of this city
+     */
     getLength() {
-        const length = this.connections.reduce((acc, connection) => {
-            const a = this.cityObjects[connection[0]];
-            const b = this.cityObjects[connection[1]];
-            return acc + a.pos.dist(b.pos);
-        }, 0);
-        return length;
+        let acc = 0
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if(!to) continue
+
+            acc += from.pos.dist(to.pos)
+        }
+        return acc
     }
 
     /**
      * Mutate a City.
+     * Currently includes:
+     * * Node moving
      * @param {*} config chances and values to control the mutation process
      */
     mutate(config) {
-        // merge
-        if(Math.random() < config.connectionMutateChance) {
-            // filter out all nodes
-            let nodes = this.cityObjects.filter(cityObject => cityObject instanceof Node)
 
-            // select a random one
-            let node = nodes[Math.floor(Math.random() * nodes.length)]
-            let nodeIndex = this.getIndex(node)
-            let connections = this.connectionsTo(nodeIndex)
-
-            // merge if two connecting neighbors
-            if(connections.length == 2) {
-                let cityObjIndexA = connections[0][0] == nodeIndex ? connections[0][1] : connections[0][0]
-                let cityObjIndexB = connections[1][0] == nodeIndex ? connections[1][1] : connections[1][0]
-                
-                this.connect(cityObjIndexA, cityObjIndexB)
-                this.removeCityObject(nodeIndex)
-            }
-            // remove if lonesome node 
-            else if(connections.length <= 1) {
-                this.removeCityObject(nodeIndex)
+        // delete nodes
+        for (var i = 0; i < this.cityObjects.length; i++) {
+            if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
+                this.removeCityObject(i)
+                i--
             }
         }
-        // split
-        this.connections.forEach(connection => {
-            if (Math.random() < config.connectionMutateChance) {
-                // make a new node thats between the two endpoints
-                let node = new Node(
-                    this.cityObjects[connection[0]].pos.add(this.cityObjects[connection[1]].pos).mul(1 / 2)
-                )
-                let nodeIndex = this.addCityObject(node)
-
-                // modify the first connection
-                let oldEndpoint = connection[0]
-                connection[0] = nodeIndex
-                // and add a new one
-                this.connect(oldEndpoint, nodeIndex)
+        
+        // create nodes
+        for (var i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if (to && Math.random() < config.nodeMutationChance) {
+                let dest = from.pos.add(to.pos).mul(1/2)
+                let newNodeIndex = this.addNode(dest, from.connection)
+                this.setConnection(i, newNodeIndex)
             }
-        })
+        }
+
         // move
         this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < config.moveChance) {
                 cityObject.moveRandomly(config.maxMoveDelta)
             }
-        });
-        // reconnect
-        // reconnect a connection to one of its neighbors
-        /*this.connections.forEach(connection => {
-            if(Math.random() < config.reconnectChance) {
-                var objIndex, reconnectEndpoint;
-                if(Math.random() < 0.5) {
-                    objIndex = connection[0]
-                    reconnectEndpoint = 1
-                } else {
-                    objIndex = connection[1]
-                    reconnectEndpoint = 0
-                }
-                let oldIndex = connection[reconnectEndpoint]
-
-                if(this.connectionCountTo(oldIndex) > 2) { // otherwise don't reconnect
-                    let connections = this.neighborsOf(oldIndex).filter(index => index != objIndex)
-                    let newIndex = connections[Math.floor(Math.random() * connections.length)]
-                    connection[reconnectEndpoint] = newIndex
-                }
-            }
-        })*/
-        this.connections.filter(connection => {
-            let a = this.cityObjects[connection[0]]
-            let b = this.cityObjects[connection[1]]
-            return ((a instanceof Node && b instanceof Consumer) ||
-                (a instanceof Consumer && b instanceof Node)) &&
-                Math.random() < config.reconnectChance
-        }).forEach(connection => {
-            let reconnectEndpoint = this.cityObjects[connection[0]] instanceof Node ? 0 : 1
-            // we filter out all nodes available
-            let nodes = this.cityObjects.filter(o => o instanceof Node)
-            // reconnect to some random node, could be the current one too
-            connection[reconnectEndpoint] = this.getIndex(nodes[Math.floor(Math.random() * nodes.length)])
         })
+
+        // reconnect
+        for(let i = 0, stop = this.cityObjects.length; i < stop; i++) {
+            let from = this.cityObjects[i]
+            let to = this.cityObjects[from.connection]
+            if (to && Math.random() < config.reconnectChance) {
+                let unrelatedSet = Array.from(this.cityObjectsUnrelatedTo(i).keys())
+                let reconnectTo = unrelatedSet[Math.floor(Math.random() * unrelatedSet.length)]
+                from.connection = reconnectTo
+            }
+        }
+
         delete this.fitness
     }
 
@@ -256,8 +232,8 @@ class City {
      * Make an exact copy of this city.
      */
     clone() {
-        const c = new City(Array.from(this.cityObjects, o => o.clone()))
-        c.connections = Array.from(this.connections, con => Array.from(con))
+        let c = Object.create(City.prototype)
+        c.cityObjects = Array.from(this.cityObjects, o => o.clone())
         return c
     }
 }

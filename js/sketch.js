@@ -4,26 +4,17 @@ const sketch = () => {
     const width = 500;
     const canvas = document.getElementById('canvas');
 
-    let initialCity = new City([
-        new Consumer(new Position(100, 150)), 
-        new Consumer(new Position(20, 20)), 
-        new Consumer(new Position(200, 20)), 
-        new Node    (new Position(10, 100)),
-        new Node    (new Position(400, 50)),
-        new Consumer(new Position(200, 100)), 
-        new Consumer(new Position(200, 200)), 
-        new Consumer(new Position(300, 250)), 
-        new Consumer(new Position(400, 100)),
-        new Transformer(new Position(250, 150))
-    ]);
-    initialCity.connect(0, 3)
-    initialCity.connect(1, 3)
-    initialCity.connect(2, 3)
-    initialCity.connect(3, 4)
-    initialCity.connect(4, 5)
-    initialCity.connect(4, 6)
-    initialCity.connect(4, 7)
-    initialCity.connect(4, 8)
+    let initialCity = new City()
+    initialCity.addTransformer(new Position(250, 150), null)
+    initialCity.addNode(new Position(10, 100), 0)
+    initialCity.addNode(new Position(400, 50), 1)
+    initialCity.addConsumer(new Position(100, 150), 1) 
+    initialCity.addConsumer(new Position(20, 20), 1) 
+    initialCity.addConsumer(new Position(200, 20), 1) 
+    initialCity.addConsumer(new Position(200, 100), 2) 
+    initialCity.addConsumer(new Position(200, 200), 2) 
+    initialCity.addConsumer(new Position(300, 250), 2) 
+    initialCity.addConsumer(new Position(400, 100), 2)
 
     let simulationState = {
         simulate: true,
@@ -37,8 +28,8 @@ const sketch = () => {
         moveChance: 0.6,
         maxMoveDelta: 5,
         reconnectChance: 0.05,
-        nodePenalty: 20,
-        connectionMutateChance: 0.02,
+        nodePenalty: 5,
+        nodeMutationChance: 0.02,
         selectionBias: 1,
     }
 
@@ -71,12 +62,15 @@ const sketch = () => {
     function draw() {
         let ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
-        population.getFittest().draw(ctx, drawConfig);
-        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(population.getFittest().getLength()) + 'm';
+
+        let fittest = population.getFittest()
+        fittest.draw(ctx, drawConfig)
+
+        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(fittest.getLength()) + 'm';
         document.getElementById('result-generations').innerHTML = "Generation: " + simulationState.generationCount;
-        document.getElementById('result-consumers').innerHTML = "Häuser: " + population.getFittest().cityObjects.filter(obj => obj instanceof Consumer).length;
-        document.getElementById('result-nodes').innerHTML = "Knoten: " + population.getFittest().cityObjects.filter(obj => obj instanceof Node).length;
-        document.getElementById('result-connections').innerHTML = "Verbindungen: " + population.getFittest().connections.length;
+        document.getElementById('result-consumers').innerHTML = "Häuser: " + fittest.cityObjects.filter(obj => obj instanceof Consumer).length;
+        document.getElementById('result-nodes').innerHTML = "Knoten: " + fittest.cityObjects.filter(obj => obj instanceof Node).length;
+        document.getElementById("result-connections").innerHTML = "Verbindungen: " + (fittest.cityObjects.length - 1)
 
         // console.log(population.getFittest())
         
@@ -139,9 +133,8 @@ const sketch = () => {
         } else {
             // clicked
             let clickPos = new Position(event.offsetX, event.offsetY);
-            let obj = new Consumer(clickPos);
             let best = population.getFittest();
-            best.addConnectedCityObject(obj);
+            best.addConsumer(clickPos, 0)
             population.repopulate(best);
             draw()
         }
@@ -192,8 +185,9 @@ const sketch = () => {
 
     document.getElementById('action-set-populations-size').value = populationConfig.size;
     document.getElementById('action-set-populations-size').addEventListener('input', event => {
-        if(event.target.value > 1) {
-            populationConfig.size = event.target.value;
+        let value = Number(event.target.value)
+        if(value > 1) {
+            populationConfig.size = value;
             population.updateConfig(populationConfig);
         } else {
             event.target.value = 2;
@@ -202,38 +196,42 @@ const sketch = () => {
 
     document.getElementById('action-set-position-mutation-rate').value = populationConfig.moveChance;
     document.getElementById('action-set-position-mutation-rate').addEventListener('input', event => {
-        if(event.target.value <= 1 && event.target.value >= 0) {
-            populationConfig.moveChance = event.target.value;
+        let value =Number(event.target.value)
+        if(value <= 1 && value >= 0) {
+            populationConfig.moveChance = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = (event.target.value > 1) ? 1 : 0;
+            event.target.value = (value > 1) ? 1 : 0;
         }
     });
 
     document.getElementById('action-set-position-mutation-max').value = populationConfig.maxMoveDelta;
     document.getElementById('action-set-position-mutation-max').addEventListener('input', event => {
-        if(event.target.value >= 1) {
-            populationConfig.maxMoveDelta = event.target.value;
+        let value = Number(event.target.value)
+        if(value >= 1) {
+            populationConfig.maxMoveDelta = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = 1;
+            value = 1;
         }
     });
 
-    document.getElementById('action-set-connections-mutation-rate').value = populationConfig.reconnectChance;
-    document.getElementById('action-set-connections-mutation-rate').addEventListener('input', event => {
-        if(event.target.value <= 1 && event.target.value >= 0) {
-            populationConfig.reconnectChance = event.target.value;
+    document.getElementById('action-set-reconnect-chance').value = populationConfig.reconnectChance;
+    document.getElementById('action-set-reconnect-chance').addEventListener('input', event => {
+        let value = Number(event.target.value)
+        if(value <= 1 && value >= 0) {
+            populationConfig.reconnectChance = value;
             population.updateConfig(populationConfig);
         } else {
-            event.target.value = (event.target.value > 1) ? 1 : 0;
+            event.target.value = (value > 1) ? 1 : 0;
         }
     });
     
     document.getElementById('action-set-generations-per-second').value = simulationState.eps;
     document.getElementById('action-set-generations-per-second').addEventListener('input', event => {
-        if (event.target.value >= 1) {
-            simulationState.eps = event.target.value;
+        let value = Number(event.target.value)
+        if (value >= 1) {
+            simulationState.eps = value;
             population.updateConfig(populationConfig);
         } else {
             event.target.value = 1;
@@ -242,24 +240,26 @@ const sketch = () => {
 
     document.getElementById('action-set-node-penalty').value = populationConfig.nodePenalty;
     document.getElementById('action-set-node-penalty').addEventListener('input', event => {
-        if (event.target.value >= 0) {
-            populationConfig.nodePenalty = event.target.value;
+        let value = Number(event.target.value)
+        if (value >= 0) {
+            populationConfig.nodePenalty = value;
             population.updateConfig(populationConfig);
         }
     });
 
-    document.getElementById('action-set-node-mutation-rate').value = populationConfig.connectionMutateChance;
+    document.getElementById('action-set-node-mutation-rate').value = populationConfig.nodeMutationChance;
     document.getElementById('action-set-node-mutation-rate').addEventListener('input', event => {
-        if (event.target.value >= 0) {
-            populationConfig.connectionMutateChance = event.target.value;
-            population.updateConfig(populationConfig);
+        let value = Number(event.target.value)
+        if (value >= 0) {
+            populationConfig.nodeMutationChance = value
+            population.updateConfig(populationConfig)
         }
     });
 
     function updateSelectionBiasColor(slider) {
-        let min = slider.min
-        let max = slider.max
-        let val = slider.value
+        let min = Number(slider.min)
+        let max = Number(slider.max)
+        let val = Number(slider.value)
         if(val < 0) {
             slider.style.background = "hsl(12, " + (Math.abs(val) / Math.abs(min)) * 100 + "%, 70%)"
         } else if(val == 0) {
@@ -271,7 +271,7 @@ const sketch = () => {
 
     document.getElementById('action-set-selection-bias').value = populationConfig.selectionBias;
     document.getElementById('action-set-selection-bias').addEventListener("input", event => {
-        populationConfig.selectionBias = event.target.value;
+        populationConfig.selectionBias = Number(event.target.value);
         population.updateConfig(populationConfig)
         updateSelectionBiasColor(event.target)
     });
@@ -281,4 +281,4 @@ const sketch = () => {
     startSimulation()
 };
 
-document.addEventListener("DOMContentLoaded", sketch);
+document.addEventListener("DOMContentLoaded", sketch)
