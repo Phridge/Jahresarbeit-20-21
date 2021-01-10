@@ -1,33 +1,33 @@
 class City {
     constructor() {
-        this.cityObjects = []
+        this.cityObjects = [];
     }
 
     addTransformer(pos, connection = 0) {
-        return this.addCityObject(new Transformer(pos, connection))
+        return this.addCityObject(new Transformer(pos, connection));
     }
 
     addConsumer(pos, connection = 0) {
-        return this.addCityObject(new Consumer(pos, connection))
+        return this.addCityObject(new Consumer(pos, connection));
     }
     
     addNode(pos, connection = 0) {
-        return this.addCityObject(new Node(pos, connection))
+        return this.addCityObject(new Node(pos, connection));
     }
 
     addCityObject(obj) {
-        let index = this.cityObjects.length
-        this.cityObjects.push(obj)
-        delete this.fitness
-        return index
+        let index = this.cityObjects.length;
+        this.cityObjects.push(obj);
+        delete this.fitness;
+        return index;
     }
 
     cityObjectAt(index) {
-        return this.cityObjects[index].clone()
+        return this.cityObjects[index].clone();
     }
 
     indexOf(obj) {
-        return this.cityObjects.indexOf(obj)
+        return this.cityObjects.indexOf(obj);
     }
 
     /**
@@ -36,8 +36,8 @@ class City {
      * @param {*} connection its new connection
      */
     setConnection(objIndex, connection) {
-        this.cityObjects[objIndex].connection = connection
-        delete this.fitness
+        this.cityObjects[objIndex].connection = connection;
+        delete this.fitness;
     }
 
     /**
@@ -46,34 +46,34 @@ class City {
      * @returns a Set of indices
      */
     cityObjectsConnectedTo(objIndex) {
-        let result = new Set()
+        let result = new Set();
         for(let i = 0; i < this.cityObjects.length; i++) {
             if(this.cityObjects[i].connection == objIndex) {
-                result.add(i)
+                result.add(i);
             }
         }
-        return result
+        return result;
     }
 
     cityObjectsUnrelatedTo(objIndex) {
-        let result = new Set()
+        let result = new Set();
         for(let i = 0; i < this.cityObjects.length; i++) {
             if(!this.indirectConnectionBetween(i, objIndex)) {
-                result.add(i)
+                result.add(i);
             }
         }
-        return result
+        return result;
     }
 
     indirectConnectionBetween(from, to) {
         while(from !== to) {
             if(from === null) {
-                return false
+                return false;
             } else {
-                from = this.cityObjects[from].connection
+                from = this.cityObjects[from].connection;
             }
         }
-        return true
+        return true;
     }
 
     /**
@@ -82,22 +82,22 @@ class City {
      * @param {*} index index of removed city object
      */
     removeCityObject(index) {
-        let target = this.cityObjects[index]
-        let reconnectTarget = target.connection - (target.connection >= index ? 1 : 0)
+        let target = this.cityObjects[index];
+        let reconnectTarget = target.connection - (target.connection >= index ? 1 : 0);
 
-        this.cityObjects.splice(index, 1)
+        this.cityObjects.splice(index, 1);
         
         // revalidate all the connections that point TO or ABOVE the city object
         for(var i = 0, stop = this.cityObjects.length; i < stop; i++) {
-            let obj = this.cityObjects[i]
+            let obj = this.cityObjects[i];
             if(obj.connection === index) {
-                obj.connection = reconnectTarget
+                obj.connection = reconnectTarget;
             } else if (obj.connection > index) {
-                obj.connection -= 1
+                obj.connection -= 1;
             }
         }
 
-        delete this.fitness
+        delete this.fitness;
     }
 
     /**
@@ -106,7 +106,7 @@ class City {
      * @param {*} drawConfig config used for drawing that influences behaviour of city objects
      */
     getCityObjectNear(position, drawConfig) {
-        return this.cityObjects.find(obj => obj.containsPosition(position, drawConfig))
+        return this.cityObjects.find(obj => obj.containsPosition(position, drawConfig));
     }
 
     /**
@@ -115,20 +115,20 @@ class City {
      * @param {*} drawConfig config that some city objects require for functioning
      */
     draw(ctx, drawConfig) {
-        ctx.lineWidth = drawConfig.connection.width
-        ctx.strokeStyle = drawConfig.connection.color
+        ctx.lineWidth = drawConfig.connection.width;
+        ctx.strokeStyle = drawConfig.connection.color;
         for(let i = 0; i < this.cityObjects.length; i++) {
-            ctx.beginPath()
-            let from = this.cityObjects[i]
-            let to = this.cityObjects[from.connection]
-            if(!to) continue
+            ctx.beginPath();
+            let from = this.cityObjects[i];
+            let to = this.cityObjects[from.connection];
+            if(!to) continue;
 
-            ctx.moveTo(from.pos.x, from.pos.y)
-            ctx.lineTo(to.pos.x, to.pos.y)
-            ctx.stroke()
+            ctx.moveTo(from.pos.x, from.pos.y);
+            ctx.lineTo(to.pos.x, to.pos.y);
+            ctx.stroke();
         }
         for (let i = 0; i < this.cityObjects.length; i++) {
-            this.cityObjects[i].draw(ctx, drawConfig)
+            this.cityObjects[i].draw(ctx, drawConfig);
         }
     }
 
@@ -141,43 +141,39 @@ class City {
      */
     getFitness(config) {
         if(!this.fitness) {
-            var length = 0
+            var length = 0;
             for(let i = 0; i < this.cityObjects.length; i++) {
-                let from = this.cityObjects[i]
-                let to = this.cityObjects[from.connection]
-                if(!to) continue
+                let from = this.cityObjects[i];
+                let to = this.cityObjects[from.connection];
+                if(!to) continue;
 
-                length += from.pos.dist(to.pos)
-
-                if (typeof length != "number") {
-                    throw Error()
-                }
+                length += from.pos.dist(to.pos);
 
                 if (from instanceof Node) {
-                    length += config.nodePenalty
+                    length += config.nodePenalty;
                 }
             }
             
             // this calculation ensures that the shortest length sum
             // gets the most points
-            this.fitness = 100 / (length / 100 + 1)
+            this.fitness = 100 / (length / 100 + 1);
         }
-        return this.fitness
+        return this.fitness;
     }
 
     /**
      * Calculate the total length of only the connections of this city
      */
     getLength() {
-        let acc = 0
+        let acc = 0;
         for(let i = 0; i < this.cityObjects.length; i++) {
-            let from = this.cityObjects[i]
-            let to = this.cityObjects[from.connection]
-            if(!to) continue
+            let from = this.cityObjects[i];
+            let to = this.cityObjects[from.connection];
+            if(!to) continue;
 
-            acc += from.pos.dist(to.pos)
+            acc += from.pos.dist(to.pos);
         }
-        return acc
+        return acc;
     }
 
     /**
@@ -191,49 +187,49 @@ class City {
         // delete nodes
         for (var i = 0; i < this.cityObjects.length; i++) {
             if (this.cityObjects[i] instanceof Node && Math.random() < config.nodeMutationChance) {
-                this.removeCityObject(i)
-                i--
+                this.removeCityObject(i);
+                i--;
             }
         }
         
         // create nodes
         for (var i = 0, stop = this.cityObjects.length; i < stop; i++) {
-            let from = this.cityObjects[i]
-            let to = this.cityObjects[from.connection]
+            let from = this.cityObjects[i];
+            let to = this.cityObjects[from.connection];
             if (to && Math.random() < config.nodeMutationChance) {
-                let dest = from.pos.add(to.pos).mul(1/2)
-                let newNodeIndex = this.addNode(dest, from.connection)
-                this.setConnection(i, newNodeIndex)
+                let dest = from.pos.add(to.pos).mul(1/2);
+                let newNodeIndex = this.addNode(dest, from.connection);
+                this.setConnection(i, newNodeIndex);
             }
         }
 
         // move
         this.cityObjects.forEach(cityObject => {
             if(cityObject instanceof Node && Math.random() < config.moveChance) {
-                cityObject.moveRandomly(config.maxMoveDelta)
+                cityObject.moveRandomly(config.maxMoveDelta);
             }
-        })
+        });
 
         // reconnect
         for(let i = 0, stop = this.cityObjects.length; i < stop; i++) {
-            let from = this.cityObjects[i]
-            let to = this.cityObjects[from.connection]
+            let from = this.cityObjects[i];
+            let to = this.cityObjects[from.connection];
             if (to && Math.random() < config.reconnectChance) {
-                let unrelatedSet = Array.from(this.cityObjectsUnrelatedTo(i).keys())
-                let reconnectTo = unrelatedSet[Math.floor(Math.random() * unrelatedSet.length)]
-                from.connection = reconnectTo
+                let unrelatedSet = Array.from(this.cityObjectsUnrelatedTo(i).keys());
+                let reconnectTo = unrelatedSet[Math.floor(Math.random() * unrelatedSet.length)];
+                from.connection = reconnectTo;
             }
         }
 
-        delete this.fitness
+        delete this.fitness;
     }
 
     /**
      * Make an exact copy of this city.
      */
     clone() {
-        let c = Object.create(City.prototype)
-        c.cityObjects = Array.from(this.cityObjects, o => o.clone())
-        return c
+        let clone = Object.create(City.prototype);
+        clone.cityObjects = Array.from(this.cityObjects, o => o.clone());
+        return clone;
     }
 }

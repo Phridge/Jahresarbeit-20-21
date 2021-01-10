@@ -8,7 +8,7 @@ class Population {
      */
     constructor(config, example) {
         this.config = config;
-        this.repopulate(example)
+        this.repopulate(example);
     }
 
     getFittest() {
@@ -22,26 +22,25 @@ class Population {
     }
 
     nextPopulation() {
-        this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config))
-        // console.log(this.cities[0].getFitness(), this.cities[this.cities.length-1].getFitness());
-        let size = this.config.size
+        this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config));
+        let size = this.config.size;
         let newCities = new Array(size);
 
         for(var i = 0; i < size; i++) {
-            var x = Math.random()
-            x = Math.pow(x, Math.exp(this.config.selectionBias))
-            x = Math.floor(x * this.cities.length)
+            var x = Math.random();
+            x = Math.pow(x, Math.exp(this.config.selectionBias));
+            x = Math.floor(x * this.cities.length);
 
-            let child = this.cities[x].clone()
-            child.mutate(this.config)
-            newCities[i] = child
+            let child = this.cities[x].clone();
+            child.mutate(this.config);
+            newCities[i] = child;
         }
 
-        this.cities = newCities
+        this.cities = newCities;
     }
 
     repopulate(example) {
-        this.cities = (this.cities || new Array(this.config.size).fill(null)).fill(example)
+        this.cities = (this.cities || new Array(this.config.size).fill(null)).fill(example);
     }
 
     updateConfig(config) {
