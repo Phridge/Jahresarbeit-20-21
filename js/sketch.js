@@ -5,12 +5,12 @@ const sketch = () => {
     initialCity.addTransformer(new Position(250, 150), null);
     initialCity.addNode(new Position(10, 100), 0);
     initialCity.addNode(new Position(400, 50), 1);
-    initialCity.addConsumer(new Position(100, 150), 1) ;
-    initialCity.addConsumer(new Position(20, 20), 1) ;
-    initialCity.addConsumer(new Position(200, 20), 1) ;
-    initialCity.addConsumer(new Position(200, 100), 2) ;
-    initialCity.addConsumer(new Position(200, 200), 2) ;
-    initialCity.addConsumer(new Position(300, 250), 2) ;
+    initialCity.addConsumer(new Position(100, 150), 1);
+    initialCity.addConsumer(new Position(20, 20), 1);
+    initialCity.addConsumer(new Position(200, 20), 1);
+    initialCity.addConsumer(new Position(200, 100), 2);
+    initialCity.addConsumer(new Position(200, 200), 2);
+    initialCity.addConsumer(new Position(300, 250), 2);
     initialCity.addConsumer(new Position(400, 100), 2);
 
     let simulationState = {
