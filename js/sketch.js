@@ -1,4 +1,4 @@
-const sketch = () => {
+function sketch() {
     const canvas = document.getElementById('canvas');
 
     let initialCity = new City();
@@ -274,6 +274,6 @@ const sketch = () => {
 
     requestAnimationFrame(draw);
     startSimulation();
-};
+}
 
 document.addEventListener("DOMContentLoaded", sketch);
