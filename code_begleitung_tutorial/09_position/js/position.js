@@ -1,5 +1,7 @@
+/**
+ * Diese Klasse beschreibt eine Position im 2Dimensionalen Raum.
+ */
 class Position {
-
     /**
      * Kreiere eine Position von x- und y-Koordinate.
      * @param {*} x - die x-Koordinate
