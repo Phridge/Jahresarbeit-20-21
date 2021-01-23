@@ -1,19 +1,19 @@
 /**
- * Mit dieser Klasse wird ein Haus in der Stadt dargestellt.
- * Jedes Haus hat eine Position im Raum und kann sich selbst zeichnen auf ein Canvas.
+ * Mit dieser Klasse wird ein Haus bzw. ein Verbraucher in der Stadt dargestellt.
+ * Jeder Verbraucher hat eine Position im Raum und kann sich selbst zeichnen auf ein Canvas.
  */
 class Consumer {
 
     /**
-     * Kreiere ein neues Haus mit einer festen Position.
-     * @param {Position} pos - die Position wo das Haus stehen wird
+     * Kreiere einen neuen Verbraucher mit einer festen Position.
+     * @param {Position} pos - die Position wo der Verbraucher stehen wird
      */
     constructor(pos) {
         this.pos = pos;
     }
 
     /**
-     * Zeichne dieses Haus auf das Canvas mit dem "Pinsel"
+     * Zeichne diesen Verbraucher auf das Canvas mit dem "Pinsel"
      * @param {CanvasRenderingContext2D} ctx - der "Pinsel" mit dem gezeichnet wird
      */
     draw(ctx) {
