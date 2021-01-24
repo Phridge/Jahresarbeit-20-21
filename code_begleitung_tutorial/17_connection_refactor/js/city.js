@@ -15,24 +15,52 @@ class City {
      */
     constructor() {
         this.cityObjects = [];
-        this.connections = [];
     }
 
     /**
-     * Erweitere die Stadt um ein weiteres Stadtobjekt.
-     * @param {*} obj - das Stadtobjekt das zur Stadt hinzukommt
+     * Kreiere und füge einen Verbraucher hinzu.
+     * @param {Position} pos - Position des neuen Verbrauchers
+     * @param {*} connection - die Verbindung des Verbrauchers
+     * @return der Index des neuen Verbrauchers
      */
+    addConsumer(pos, connection) {
+        return this.addCityObject(new Consumer(pos, connection));
+    }
+
+    /**
+     * Kreiere und füge einen Knotenpunkt hinzu.
+     * @param {Position} pos - Position des neuen Knotenpunktes
+     * @param {*} connection - die Verbindung des Knotenpunktes
+     * @return der Index des neuen Knotenpunktes
+     */
+    addNode(pos, connection) {
+        return this.addCityObject(new Node(pos, connection));
+    }
+
+    /**
+     * Kreiere und füge einen Transformer hinzu.
+     * Erlaubt keine Verbindung.
+     * @param {Position} pos - Position des neuen Transformers
+     * @return der Index des neuen Transformers
+     */
+    addTransformer(pos) {
+        return this.addCityObject(new Transformer(pos));
+    }
+
+    /** Nicht benutzen! Nur die Stadt darf das. */
     addCityObject(obj) {
+        let index = this.cityObjects.length;
         this.cityObjects.push(obj);
+        return index;
     }
 
     /**
-     * Füge eine Verbindung zwischen zwei Stadtobjekten hinzu.
-     * @param {Number} a - der Index des ersten Stadtobjektes
-     * @param {Number} b - der Index des zweiten Stadtobjektes
+     * Ändere die Verbindung eines Stadtobjektes.
+     * @param {Number} obj - der Index des Stadtobjektes
+     * @param {Number} connection - die neue Verbindung
      */
-    addConnection(a, b) {
-        this.connections.push([a, b]);
+    setConnection(obj, connection) {
+        this.cityObjects[obj].connection = connection;
     }
 
     /**
@@ -43,12 +71,16 @@ class City {
      */
     getFitness() {
         let lengthSum = 0;
-        for(let i = 0; i < this.connections.length; i++) {
-            let connection = this.connections[i];
-            let objA = this.cityObjects[connection[0]];
-            let objB = this.cityObjects[connection[1]];
-            let dist = objA.pos.dist(objB.pos); // länge der Verbindung
-            lengthSum += dist;
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            let objA = this.cityObjects[i];
+
+            // Testen ob objA überhaupt eine Verbindung hat
+            // Transformer fällt hier durch
+            if(objA.connection != null) {
+                let objB = this.cityObjects[objA.connection];
+                let dist = objA.pos.dist(objB.pos); // länge der Verbindung
+                lengthSum += dist;
+            }
         }
 
         // "Umdrehen" des Wertes: je kleiner die Länge, desto höher der daraus
@@ -63,20 +95,22 @@ class City {
      */
     draw(ctx) {
         // zuerst alle Verbindungen zeichnen
-        for(let i = 0; i < this.connections.length; i++) {
-            let connection = this.connections[i];
+        for(let i = 0; i < this.cityObjects.length; i++) {
+            let objA = this.cityObjects[i];
 
-            // Stadtobjekte in dieser Verbindung
-            let objA = this.cityObjects[connection[0]];
-            let objB = this.cityObjects[connection[1]];
-
-            // Verbindung zeichnen
-            ctx.strokeStyle = "#000000";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(objA.pos.x, objA.pos.y);
-            ctx.lineTo(objB.pos.x, objB.pos.y);
-            ctx.stroke();
+            // nicht bei jedem Stadtobjekt zeigt die Verbindung
+            // auf ein anderes Objekt (siehe Transformer)
+            if(objA.connection != null) {
+                let objB = this.cityObjects[objA.connection];
+    
+                // Verbindung zeichnen
+                ctx.strokeStyle = "#000000";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(objA.pos.x, objA.pos.y);
+                ctx.lineTo(objB.pos.x, objB.pos.y);
+                ctx.stroke();
+            }
         }
 
         // danach alle Stadtobjekte
@@ -110,7 +144,6 @@ class City {
     clone() {
         let clone = new City();
         clone.cityObjects = Array.from(this.cityObjects, obj => obj.clone());
-        clone.connections = Array.from(this.connections, connection => Array.from(connection));
         return clone;
     }
 }

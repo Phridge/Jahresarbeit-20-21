@@ -39,7 +39,7 @@ class CityObject {
  * Mit dieser Klasse wird ein Haus bzw. ein Verbraucher in der Stadt dargestellt.
  * Jeder Verbraucher hat eine Position im Raum und kann sich selbst zeichnen auf ein Canvas.
  */
-class Consumer {
+class Consumer extends CityObject {
 
     /**
      * Kreiere einen neuen Verbraucher mit einer festen Position.
@@ -75,7 +75,7 @@ class Consumer {
  * Im Gegensatz zu den anderen Stadtobjekten kann ein Knotenpunkt
  * seine Position ändern mithilfe der Methode "moveRandomly"
  */
-class Node {
+class Node extends CityObject {
     /**
      * Kreiere einen Knotenpunkt mit einer Startposition und
      * -Verbindung.
@@ -125,7 +125,7 @@ class Node {
  * Ebenso wie ein Konsument hat ein Transformer eine Position und
  * kann sich selbst zeichnen.
  */
-class Transformer {
+class Transformer extends CityObject {
     /**
      * Kreiere einen Transformer mit einer festen Position.
      * @param {Position} pos - die Position des Transformers

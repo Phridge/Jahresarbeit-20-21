@@ -5,7 +5,6 @@
  * Nachdem eine Population Ausgangs-Städte erhalten hat,
  * mit denen die Evolution begonnen werden kann, werden immer
  * wieder diese Schritte wiederholt:
- * * Bewertung
  * * Selektion
  * * Repopulation
  * * Mutation
@@ -50,13 +49,12 @@ class Population {
 
     /**
      * Simuliert eine Epoche in folgenden Einzelschritten:
-     * * Bewertung
      * * Selektion
      * * Repopulation
      * * Mutation
      */
     nextGeneration() {
-        // Bewertung & Selektion
+        // Selektion
         let best = this.getFittest();
 
         // Repopulation
