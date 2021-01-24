@@ -129,7 +129,7 @@ function sketch() {
             // clicked
             let clickPos = new Position(event.offsetX, event.offsetY);
             let best = population.getFittest();
-            best.addConsumer(clickPos, 0)
+            best.addConsumer(clickPos, 0);
             population.repopulate(best);
             draw();
         }
