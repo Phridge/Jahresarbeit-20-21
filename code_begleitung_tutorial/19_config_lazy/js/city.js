@@ -51,6 +51,7 @@ class City {
     addCityObject(obj) {
         let index = this.cityObjects.length;
         this.cityObjects.push(obj);
+        delete this.fitness;
         return index;
     }
 
@@ -61,6 +62,7 @@ class City {
      */
     setConnection(obj, connection) {
         this.cityObjects[obj].connection = connection;
+        delete this.fitness;
     }
 
     /**
@@ -87,6 +89,8 @@ class City {
                 obj.connection -= 1;
             }
         }
+
+        delete this.fitness;
     }
 
     /**
@@ -138,6 +142,11 @@ class City {
      * @return den Fitness-score
      */
     getFitness(config) {
+        // ist die Fitness im "Cache", sofort zurückgeben
+        if(this.fitness) {
+            return this.fitness
+        }
+
         let lengthSum = 0;
         for(let i = 0; i < this.cityObjects.length; i++) {
             let objA = this.cityObjects[i];
@@ -159,8 +168,8 @@ class City {
 
         // "Umdrehen" des Wertes: je kleiner die Länge, desto höher der daraus
         // berechnete Wert für die Fitness
-        let fitness = 100 / (lengthSum / 100 + 1);
-        return fitness;
+        this.fitness = 100 / (lengthSum / 100 + 1);
+        return this.fitness;
     }
 
     /**
@@ -242,6 +251,8 @@ class City {
                 from.connection = reconnectTo;
             }
         }
+
+        delete this.fitness;
     }
 
     /**
