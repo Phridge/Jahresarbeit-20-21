@@ -144,7 +144,7 @@ class City {
     getFitness(config) {
         // ist die Fitness im "Cache", sofort zurückgeben
         if(this.fitness) {
-            return this.fitness
+            return this.fitness;
         }
 
         let lengthSum = 0;
