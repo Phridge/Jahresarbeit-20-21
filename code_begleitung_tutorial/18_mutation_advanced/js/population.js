@@ -14,7 +14,7 @@
  */
 class Population {
     /**
-     * 
+     * Kreiere eine neue Population mit einer Start-Stadt und gewisser Kapazität.
      * @param {City} initialCity - Die Stadt, die mehrmals kopiert wird
      * um die Kapazitäten zu füllen
      * @param {Number} size - wie viele Städte es je Epoche gibt
