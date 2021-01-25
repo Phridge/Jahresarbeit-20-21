@@ -148,6 +148,12 @@ class City {
                 let dist = objA.pos.dist(objB.pos); // länge der Verbindung
                 lengthSum += dist;
             }
+
+            // hinzufügen einer gewissen Extralänge für jeden Knotenpunkt
+            let nodePenalty = 5;
+            if(objA instanceof Node) {
+                lengthSum += nodePenalty;
+            }
         }
 
         // "Umdrehen" des Wertes: je kleiner die Länge, desto höher der daraus
