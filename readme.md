@@ -22,7 +22,8 @@
 1. Fitness calculation
 1. Population (Grundlegendes) + selection (Einfachster Algorithmus)
 1. Connection refactor (Eine Verbindung pro Objekt)
-1. More city mutations (Inklusive config Objekt) + fitness laziness
+1. More city mutations
+1. config object + fitness laziness
 1. Sidebar
 1. Selection bias + new selection algorithm
 1. EpS control?
