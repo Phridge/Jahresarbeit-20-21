@@ -25,6 +25,8 @@
 1. More city mutations
 1. config object + fitness laziness
 1. Sidebar
+1. Simulation Control
+1. Adding Consumers
 1. Selection bias + new selection algorithm
 1. EpS control?
 1. Click to add consumers?
