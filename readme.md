@@ -2,7 +2,13 @@
 # Evolutionäre Algorithmen in der Versorgungsindustrie | Anleitung für Schüler
 
 ## Pflichtenheft
-[Google Docs Pflichtenheft](https://docs.google.com/document/d/1i6H_FGDA7Yx-ZfpDEmi-jru_cOfArVDJw6EGfY4juaM/edit?usp=sharing)
+[Google Docs Pflichtenheft (Link entfernt)]()
+
+## Tutorial
+[Overleaf LaTex Tutorial](https://www.overleaf.com/read/mcyxfftjrpqz)
+
+## Dokumentation
+[Overleaf LaTex Dokumentation](https://www.overleaf.com/read/dcynxhtksmmp)
 
 ## Tutorial Themen
 ### Grundlagen der Webentwicklung
