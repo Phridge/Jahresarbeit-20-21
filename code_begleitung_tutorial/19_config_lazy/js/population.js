@@ -22,6 +22,7 @@ class Population {
      */
     constructor(config, initialCity) {
         this.cities = new Array(config.size); 
+        this.config = config;
 
         // füllen der Population
         this.cities[0] = initialCity;

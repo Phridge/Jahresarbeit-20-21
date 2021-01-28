@@ -160,7 +160,6 @@ class City {
             }
 
             // hinzufügen einer gewissen Extralänge für jeden Knotenpunkt
-            let nodePenalty = 5;
             if(objA instanceof Node) {
                 lengthSum += config.nodePenalty;
             }
