@@ -59,15 +59,20 @@ class Population {
         // Selektion
         let best = this.getFittest();
 
+        // config.size ist vielleicht größer/kleiner als vorher
+        let newCities = new Array(this.config.size);
+
         // Repopulation
-        for(let i = 0; i < this.cities.length; i++) {
+        for(let i = 0; i < newCities.length; i++) {
             let newCity = best.clone();
             
             // Mutation
             newCity.mutate(this.config);
 
-            this.cities[i] = newCity;
+            newCities[i] = newCity;
         }
+
+        this.cities = newCities;
     }
 
     /**
