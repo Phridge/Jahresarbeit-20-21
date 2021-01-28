@@ -26,7 +26,7 @@ class Population {
 
         // füllen der Population
         this.cities[0] = initialCity;
-        for(let i = 1; i < size; i++) {
+        for(let i = 1; i < config.size; i++) {
             this.cities[i] = initialCity.clone();
         }
     }
