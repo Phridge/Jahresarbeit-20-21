@@ -239,6 +239,8 @@ function sketch() {
         if (value >= 0) {
             populationConfig.nodePenalty = value;
             population.updateConfig(populationConfig);
+        } else {
+            event.target.value = 0;
         }
     });
 
@@ -248,6 +250,8 @@ function sketch() {
         if (value >= 0) {
             populationConfig.nodeMutationChance = value;
             population.updateConfig(populationConfig);
+        } else {
+            event.target.value = 0;
         }
     });
 

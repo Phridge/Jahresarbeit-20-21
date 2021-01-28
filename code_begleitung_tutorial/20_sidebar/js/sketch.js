@@ -37,17 +37,17 @@ function sketch() {
         // Epoche simulieren
         population.nextGeneration();
 
-        // Daten in der Sidebar anzeigen
-        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(fittest.getLength()) + 'm';
-        document.getElementById('result-generations').innerHTML = "Generation: " + generationCount;
-        document.getElementById('result-consumers').innerHTML = "Häuser: " + fittest.cityObjects.filter(obj => obj instanceof Consumer).length;
-        document.getElementById('result-nodes').innerHTML = "Knoten: " + fittest.cityObjects.filter(obj => obj instanceof Node).length;
-        document.getElementById("result-connections").innerHTML = "Verbindungen: " + (fittest.cityObjects.length - 1);
-
         // Zeichnen der besten Stadt
         let best = population.getFittest();
         best.draw(ctx);
         console.log(best.getFitness());
+
+        // Daten in der Sidebar anzeigen
+        document.getElementById('result-length').innerHTML = "Länge: " + Math.round(best.getLength()) + 'm';
+        document.getElementById('result-generations').innerHTML = "Generation: " + generationCount;
+        document.getElementById('result-consumers').innerHTML = "Häuser: " + best.cityObjects.filter(obj => obj instanceof Consumer).length;
+        document.getElementById('result-nodes').innerHTML = "Knoten: " + best.cityObjects.filter(obj => obj instanceof Node).length;
+        document.getElementById("result-connections").innerHTML = "Verbindungen: " + (best.cityObjects.length - 1);
 
         // Epoche fertig
         generationCount += 1;
@@ -112,6 +112,8 @@ function sketch() {
         if (value >= 0) {
             populationConfig.nodePenalty = value;
             population.updateConfig(populationConfig);
+        } else {
+            event.target.value = 0;
         }
     });
 
@@ -122,6 +124,8 @@ function sketch() {
         if (value >= 0) {
             populationConfig.nodeMutationChance = value;
             population.updateConfig(populationConfig);
+        } else {
+            event.target.value = 0;
         }
     });
 
