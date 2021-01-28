@@ -1,10 +1,11 @@
 # Jahresarbeit SRZ Firmenprojekt bei SAP
-## Evolutionäre Algorithmen in der Versorgungsindustrie | Anleitung für Schüler
+# Evolutionäre Algorithmen in der Versorgungsindustrie | Anleitung für Schüler
 
-### Pflichtenheft
+## Pflichtenheft
 [Google Docs Pflichtenheft](https://docs.google.com/document/d/1i6H_FGDA7Yx-ZfpDEmi-jru_cOfArVDJw6EGfY4juaM/edit?usp=sharing)
 
-### Tutorial Themen
+## Tutorial Themen
+### Grundlagen der Webentwicklung
 1. HTML
 1. CSS
 1. JS basic
@@ -12,6 +13,7 @@
 1. Classes
 1. DOM Interaction
 1. Canvas
+### Schritte zum evolutionären Algorithmus
 1. Animation
 1. Position
 1. Consumer (Grundlegendes)
