@@ -60,7 +60,8 @@ class Population {
         let best = this.getFittest();
 
         // Repopulation
-        for(let i = 0; i < this.cities.length; i++) {
+        this.cities[0] = best;
+        for(let i = 1; i < this.cities.length; i++) {
             let newCity = best.clone();
             
             // Mutation
