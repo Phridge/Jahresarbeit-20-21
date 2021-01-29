@@ -107,7 +107,7 @@ function sketch() {
 
         // wir wollen die Änderungen sofort sehen
         draw();
-    }, false);
+    });
 
     // Buttons EventListeners
 
@@ -120,7 +120,7 @@ function sketch() {
             event.target.innerHTML = "stoppen";
             startSimulation();
         }
-    }, false);
+    });
 
     // Reset
     document.getElementById('action-reset').addEventListener('click', event => {

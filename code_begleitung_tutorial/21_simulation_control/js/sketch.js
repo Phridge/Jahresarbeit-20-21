@@ -73,7 +73,7 @@ function sketch() {
             event.target.innerHTML = "stoppen";
             simulationState.isSimulating = true;
         }
-    }, false);
+    });
 
     // Reset
     document.getElementById('action-reset').addEventListener('click', event => {

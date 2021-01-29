@@ -133,7 +133,7 @@ function sketch() {
             population.repopulate(best);
             draw();
         }
-    }, false);
+    });
 
     canvas.addEventListener("mousedown", event => {
         let downPos = new Position(event.offsetX, event.offsetY);
@@ -171,7 +171,7 @@ function sketch() {
             event.target.innerHTML = "stoppen";
             startSimulation();
         }
-    }, false);
+    });
 
     document.getElementById('action-reset').addEventListener('click', event => {
         population.repopulate(initialCity);
