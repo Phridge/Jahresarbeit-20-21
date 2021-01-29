@@ -21,7 +21,7 @@
 1. Canvas
 1. Animation
 ### Schritte zum evolutionären Algorithmus
-1. Position
+9. Position
 1. Consumer (Grundlegendes)
 1. Transformer + Connections drawing (Ohne City)
 1. City (Grundlegendes, einfachste Form, Verbindungspaarliste)
