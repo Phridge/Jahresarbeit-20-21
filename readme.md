@@ -19,8 +19,8 @@
 1. Classes
 1. DOM Interaction
 1. Canvas
-### Schritte zum evolutionären Algorithmus
 1. Animation
+### Schritte zum evolutionären Algorithmus
 1. Position
 1. Consumer (Grundlegendes)
 1. Transformer + Connections drawing (Ohne City)
@@ -36,9 +36,9 @@
 1. Simulation Control
 1. Adding Consumers
 1. Selection bias + new selection algorithm
-1. EpS control?
-1. Click to add consumers?
-1. Consumer draw upgrade (Inklusive draw config Objekt)?
+1. EpS control
+1. Consumer draw upgrade (Inklusive draw config Objekt)
 1. Drag n drop
+1. City History
 
 
