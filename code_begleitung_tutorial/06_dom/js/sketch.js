@@ -29,5 +29,5 @@ newElement.innerHTML = "Zweites Element <i>sogar mit Tags!</i>";
 // das neue Element an ein anderes anfügen
 liste.appendChild(newElement);
 
-// Ein "Test-Element", also rohen Text, anhängen
+// Ein "Text-Element", also rohen Text, anhängen
 newElement.appendChild(document.createTextNode("<h2>Browser austricksen leicht gemacht!</h2>"));
