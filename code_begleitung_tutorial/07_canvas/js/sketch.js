@@ -37,4 +37,5 @@ function sketch() {
 
 }
 
+// erst das Programm ausführen, wenn der Rest der Website geladen ist
 document.addEventListener("DOMContentLoaded", sketch);
