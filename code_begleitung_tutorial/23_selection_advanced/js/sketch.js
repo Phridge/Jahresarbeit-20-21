@@ -79,9 +79,6 @@ function sketch() {
         // Konsument hinzufügen und Stadt erneuern
         best.addConsumer(clickPos, 0);
         population.repopulate(best);
-
-        // wir wollen die Änderungen sofort sehen
-        draw();
     });
 
     // Buttons EventListeners
