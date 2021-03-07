@@ -58,9 +58,6 @@ class Population {
         // momentane Population sortieren
         this.cities.sort((a, b) => b.getFitness(this.config) - a.getFitness(this.config));
 
-        // Selektion
-        let best = this.getFittest();
-
         let newCities = new Array(this.config.size);
 
         // Repopulation
