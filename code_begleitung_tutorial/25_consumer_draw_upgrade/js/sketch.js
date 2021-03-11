@@ -32,6 +32,7 @@ function sketch() {
     let simulationState = {
         generationCount: 0,
         eps: 10, // "Epochs Per Second"
+        nextPopulationRefresh: 0,
         isSimulating: true
     };
 
