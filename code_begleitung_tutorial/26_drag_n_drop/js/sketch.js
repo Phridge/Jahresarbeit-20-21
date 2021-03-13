@@ -35,7 +35,7 @@ function sketch() {
         nextPopulationRefresh: 0,
         isSimulating: true,
         // speichert Informationen zum momentanen Drag-Status
-        isDragging: false
+        isDragging: null
     };
 
     // allgemeine Zeichen-Konfigurationen für zentrale Kontrolle
@@ -121,7 +121,7 @@ function sketch() {
     }
 
     // Übernimmt das Starten des Drag-Prozesses
-    function startDragging(beginPos, offset, targetObject, targetCity) {
+    function startDragging(beginPos, offset, targetObject) {
         let continueSimulating = simulationState.isSimulating;
         if (simulationState.isSimulating) {
             stopSimulation();
@@ -135,8 +135,6 @@ function sketch() {
             offset,
             // das Objekt
             targetObject,
-            // die Stadt
-            targetCity,
             // ob nach dem Drop die Simulation weitergehen soll
             continueSimulating,
         };
@@ -146,7 +144,7 @@ function sketch() {
     function stopDragging() {
         let continueSimulating = simulationState.isDragging.continueSimulating;
 
-        population.repopulate(simulationState.isDragging.targetCity);
+        population.repopulate(population.getFittest());
         simulationState.isDragging = null;
 
         if (continueSimulating) {
@@ -188,8 +186,7 @@ function sketch() {
             startDragging(
                 targetObject.pos,
                 targetObject.pos.sub(downPos),
-                targetObject,
-                targetCity
+                targetObject
             );
         }
     });
