@@ -35,7 +35,7 @@ function sketch() {
         nextPopulationRefresh: 0,
         isSimulating: true,
         // speichert Informationen zum momentanen Drag-Status
-        isDragging: null
+        isDragging: false
     };
 
     // allgemeine Zeichen-Konfigurationen für zentrale Kontrolle
