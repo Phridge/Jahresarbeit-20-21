@@ -2,16 +2,14 @@ function sketch() {
     const canvas = document.getElementById('canvas');
 
     let initialCity = new City();
-    initialCity.addTransformer(new Position(250, 150), null);
-    initialCity.addNode(new Position(10, 100), 0);
-    initialCity.addNode(new Position(400, 50), 1);
-    initialCity.addConsumer(new Position(100, 150), 1);
-    initialCity.addConsumer(new Position(20, 20), 1);
-    initialCity.addConsumer(new Position(200, 20), 1);
-    initialCity.addConsumer(new Position(200, 100), 2);
-    initialCity.addConsumer(new Position(200, 200), 2);
-    initialCity.addConsumer(new Position(300, 250), 2);
-    initialCity.addConsumer(new Position(400, 100), 2);
+    initialCity.addTransformer(new Position(300, 100)); // Index 0
+    initialCity.addNode(new Position(420, 100), 0); // Index 1
+    initialCity.addNode(new Position(170, 180), 0); // Index 2
+    initialCity.addConsumer(new Position(100, 50), 2); // Index 3
+    initialCity.addConsumer(new Position(400, 200), 1); // Index 4
+    initialCity.addConsumer(new Position(50, 250), 2); // Index 5
+    initialCity.addConsumer(new Position(450, 50), 1); // Index 6
+    initialCity.addConsumer(new Position(250, 200), 2); // Index 7
 
     let simulationState = {
         simulate: true,
